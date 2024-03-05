@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="de">
+<html xmlns:th="http://www.thymeleaf.org" lang="de">
     <head>
         <title>Justus Hummert</title>
         <link rel="icon"
@@ -40,9 +40,23 @@
                 </div>
                 <div class="space">
                     Projekte
-                    <p>
-                        <a href="https://justushummert.com:2053/">gradeCalculator</a>
-                    </p>
+                    <table>
+                        <tbody>
+                            <tr th:each="project: ${projects}">
+                                <td>
+                                    <a th:href="${project}"class="project"></a>
+                                </td>
+                        </tbody>
+                    </table>
                 </div>
+    <script>
+        //Project text as the String behind the last / of the link
+        document.querySelectorAll(".project").forEach((item) => {
+            let url = item.getAttribute("href");
+            let text = url.substring(url.lastIndexOf('/')+1);
+            item.textContent = text;
+        });
+
+    </script>
     </body>
 </html>
