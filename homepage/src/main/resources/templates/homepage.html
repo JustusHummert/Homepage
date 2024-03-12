@@ -44,19 +44,11 @@
                         <tbody>
                             <tr th:each="project: ${projects}">
                                 <td>
-                                    <a th:href="${project}"class="project"></a>
+                                    <a th:text="${project}" th:href="@{'https://' + ${project} + '.justushummert.com'}" class="project"></a>
                                 </td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
-    <script>
-        //Project text as the String behind the last / of the link
-        document.querySelectorAll(".project").forEach((item) => {
-            let url = item.getAttribute("href");
-            let text = url.substring(url.lastIndexOf('/')+1);
-            item.textContent = text;
-        });
-
-    </script>
     </body>
 </html>

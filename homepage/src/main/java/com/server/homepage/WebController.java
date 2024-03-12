@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 
 @Controller
 public class WebController {
-    private static final String projectSrc = "https://localhost/admin/getConnections";
+    private static final String projectSrc = "https://admin.localhost/getConnections";
 
     @GetMapping("")
     public String homepage(Model model){
@@ -26,6 +26,12 @@ public class WebController {
                 .baseUrl(projectSrc)
                 .build();
         Set<String> projects = weblient.get().retrieve().bodyToMono(Set.class).block();
+        if(projects== null){
+            return null;
+        }
+        //remove self links
+        projects.remove("www");
+        projects.remove("justushummert");
         model.addAttribute("projects", projects);
         System.out.println("projects: " + model.getAttribute("projects"));
         return "homepage";
