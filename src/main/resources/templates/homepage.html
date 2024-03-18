@@ -42,9 +42,9 @@
                     Projekte
                     <table>
                         <tbody>
-                            <tr th:each="project: ${projects}">
+                            <tr th:each="element: ${elements}">
                                 <td>
-                                    <a th:text="${project}" th:href="@{'https://' + ${project} + '.justushummert.com'}" class="project"></a>
+                                    <a th:text="${element.text}" th:href="${element.href}"></a>
                                 </td>
                             </tr>
                         </tbody>
