@@ -1,14 +1,26 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"  lang="en">
+<style>
+    td{
+        border: 1px solid black;
+    }
+</style>
 <head>
     <meta charset="UTF-8">
     <title>Admin</title>
 </head>
 <body>
+    <h1>Admin</h1>
     <form>
-        <input type="text" id="text" aria-label="text" placeholder="Enter text"/>
-        <input type="text" id="href" aria-label="href" placeholder="Enter href"/>
-        <button type="button" id="addElementBtn">add</button>
+        <p>
+            <input type="text" id="text" aria-label="text" placeholder="Enter text"/>
+        </p>
+        <p>
+            <input type="text" id="href" aria-label="href" placeholder="Enter href"/>
+        </p>
+        <p>
+            <button type="button" id="addElementBtn">add</button>
+        </p>
     </form>
     <table>
         <tbody>
