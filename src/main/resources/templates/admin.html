@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"  lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin</title>
+</head>
+<body>
+    <form>
+        <input type="text" id="text" aria-label="text" placeholder="Enter text"/>
+        <input type="text" id="href" aria-label="href" placeholder="Enter href"/>
+        <button type="button" id="addElementBtn">add</button>
+    </form>
+    <table>
+        <tbody>
+            <tr th:each="element: ${elements}">
+                <td
+                    th:text="${element.text}">
+                </td>
+                <td
+                    th:text="${element.href}">
+                </td>
+                <td>
+                    <button type="button" class="btn delete-Element"
+                            th:data-id="${element.id}">delete
+                    </button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script>
+    //add button functionality
+    $("#addElementBtn").click(function () {
+        let text = $("#text").val();
+        let href = $("#href").val();
+        $.ajax({
+            url: "/admin/addElement",
+            method: "post",
+            data: {
+                text: text,
+                href: href
+            },
+            dataType: "text",
+        })
+            .done(function (data) {
+                console.info(data);
+                if(data=="added")
+                    location.reload();
+                if(data=="not logged in")
+                    promptPassword();
+            })
+            .fail(function (jqXHR, textStatus, errorThrown) {
+                console.error(jqXHR, textStatus, errorThrown);
+            });
+    });
+    //delete button functionality
+    $(".delete-Element").click(function () {
+        let id = $(this).data("id");
+        $.ajax({
+            url: "/admin/deleteElement",
+            method: "post",
+            data: {
+                id: id
+            },
+            dataType: "text",
+        })
+            .done(function (data) {
+                console.info(data);
+                if(data=="deleted")
+                    location.reload();
+                if(data=="not logged in")
+                    promptPassword();
+            })
+            .fail(function (jqXHR, textStatus, errorThrown) {
+                console.error(jqXHR, textStatus, errorThrown);
+            });
+    });
+
+    //function that opens prompt for password and sends it to the server
+    function promptPassword(){
+    let password = prompt("password");
+    $.ajax({
+        url: "/admin/login",
+        method: "post",
+        data: {
+            password: password
+        },
+        dataType: "text",
+    })
+        .done(function (data){
+            if(data == "wrong password"){
+                promptPassword();
+            }
+            alert(data);
+        })
+        .fail(function (jqXHR, textStatus, errorThrown) {
+            console.error(jqXHR, textStatus, errorThrown);
+        });
+    }
+    //make buttons react to Enter
+    $("#text").keypress(function (e) {
+        if (e.key == "Enter") {
+            e.preventDefault();
+            $("#href").focus();
+        }
+    });
+    $("#href").keypress(function (e) {
+        if (e.key == "Enter") {
+            e.preventDefault();
+            $("#addElementBtn").click();
+        }
+    });
+    //focus on text input
+    $("#text").focus();
+
+
+
+
+
+</script>
+</body>
+</html>
