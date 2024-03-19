@@ -96,7 +96,26 @@
         .fail(function (jqXHR, textStatus, errorThrown) {
             console.error(jqXHR, textStatus, errorThrown);
         });
-}
+    }
+    //make buttons react to Enter
+    $("#text").keypress(function (e) {
+        if (e.key == "Enter") {
+            e.preventDefault();
+            $("#href").focus();
+        }
+    });
+    $("#href").keypress(function (e) {
+        if (e.key == "Enter") {
+            e.preventDefault();
+            $("#addElementBtn").click();
+        }
+    });
+    //focus on text input
+    $("#text").focus();
+
+
+
+
 
 </script>
 </body>
