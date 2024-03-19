@@ -39,6 +39,7 @@ public class AdminController {
         Admin admin = optionalAdmin.get();
         if(BCrypt.checkpw(password, admin.getPassword())){
             request.getSession().setAttribute("admin", true);
+            request.getSession().setMaxInactiveInterval(60*60);
             return "logged in";
         }
         return "wrong password";

@@ -15,4 +15,10 @@ public class WebController {
         model.addAttribute("elements", elementRepository.findAll());
         return "homepage";
     }
+
+    @GetMapping("/admin")
+    public String admin(Model model){
+        model.addAttribute("elements", elementRepository.findAll());
+        return "admin";
+    }
 }
