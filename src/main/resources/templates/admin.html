@@ -4,6 +4,17 @@
     td{
         border: 1px solid black;
     }
+    .modal{
+        display: none;
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0,0,0,0.4);
+    }
 </style>
 <head>
     <meta charset="UTF-8">
@@ -39,6 +50,12 @@
             </tr>
         </tbody>
     </table>
+    <div id="modal" class="modal">
+        <div>
+            <input type="password" id="password" aria-label="password"/>
+            <button type="button" id="loginBtn">login</button>
+        </div>
+    </div>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <script>
     //add button functionality
@@ -59,7 +76,7 @@
                 if(data=="added")
                     location.reload();
                 if(data=="not logged in")
-                    promptPassword();
+                    openModal();
             })
             .fail(function (jqXHR, textStatus, errorThrown) {
                 console.error(jqXHR, textStatus, errorThrown);
@@ -81,34 +98,46 @@
                 if(data=="deleted")
                     location.reload();
                 if(data=="not logged in")
-                    promptPassword();
+                    openModal();
             })
             .fail(function (jqXHR, textStatus, errorThrown) {
                 console.error(jqXHR, textStatus, errorThrown);
             });
     });
 
-    //function that opens prompt for password and sends it to the server
-    function promptPassword(){
-    let password = prompt("password");
-    $.ajax({
-        url: "/admin/login",
-        method: "post",
-        data: {
-            password: password
-        },
-        dataType: "text",
-    })
-        .done(function (data){
-            if(data == "wrong password"){
-                promptPassword();
-            }
-            alert(data);
+    //login button functionality
+    $("#loginBtn").click(function () {
+        let password = $("#password").val();
+        $.ajax({
+            url: "/admin/login",
+            method: "post",
+            data: {
+                password: password
+            },
+            dataType: "text",
         })
-        .fail(function (jqXHR, textStatus, errorThrown) {
-            console.error(jqXHR, textStatus, errorThrown);
-        });
+            .done(function (data) {
+                console.info(data);
+                alert(data);
+                if(data=="logged in")
+                    closeModal();
+            })
+            .fail(function (jqXHR, textStatus, errorThrown) {
+                console.error(jqXHR, textStatus, errorThrown);
+            });
+    });    
+
+    function openModal(){
+        modal.style.display = "block";
+        $("#password").focus();
     }
+
+    function closeModal(){
+        modal.style.display = "none";
+        $("#href").focus();
+    }
+
+
     //make buttons react to Enter
     $("#text").keypress(function (e) {
         if (e.key == "Enter") {
@@ -120,6 +149,12 @@
         if (e.key == "Enter") {
             e.preventDefault();
             $("#addElementBtn").click();
+        }
+    });
+    $("#password").keypress(function (e) {
+        if (e.key == "Enter") {
+            e.preventDefault();
+            $("#loginBtn").click();
         }
     });
     //focus on text input
