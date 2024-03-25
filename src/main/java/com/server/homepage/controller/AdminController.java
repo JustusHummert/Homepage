@@ -1,9 +1,9 @@
 package com.server.homepage.controller;
 
-import com.server.homepage.entities.Element;
+import com.server.homepage.entities.Project;
 import com.server.homepage.repositories.AdminRepository;
 import com.server.homepage.entities.Admin;
-import com.server.homepage.repositories.ElementRepository;
+import com.server.homepage.repositories.ProjectRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -22,7 +22,7 @@ public class AdminController {
     private AdminRepository adminRepository;
 
     @Autowired
-    private ElementRepository elementRepository;
+    private ProjectRepository projectRepository;
 
     //check if the admin is logged in
     @ModelAttribute("admin")
@@ -45,21 +45,21 @@ public class AdminController {
         return "wrong password";
     }
 
-    //Add an element
-    @PostMapping("/addElement")
-    public @ResponseBody String addElement(@ModelAttribute("admin") boolean admin, String text, String href){
+    //Add a project
+    @PostMapping("/addProject")
+    public @ResponseBody String addProject(@ModelAttribute("admin") boolean admin, String text, String href){
         if(!admin)
             return "not logged in";
-        elementRepository.save(new Element(text, href));
+        projectRepository.save(new Project(text, href));
         return "added";
     }
 
-    //Delete an element
-    @PostMapping("/deleteElement")
-    public @ResponseBody String deleteElement(@ModelAttribute("admin") boolean admin, Integer id){
+    //Delete a project
+    @PostMapping("/deleteProject")
+    public @ResponseBody String deleteProject(@ModelAttribute("admin") boolean admin, Integer id){
         if(!admin)
             return "not logged in";
-        elementRepository.deleteById(id);
+        projectRepository.deleteById(id);
         return "deleted";
     }
 }

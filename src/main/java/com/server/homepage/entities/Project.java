@@ -5,22 +5,22 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 
 @Entity
-public class Element {
+public class Project {
 
     @Id
     @GeneratedValue
     private Integer id;
 
-    //The visible text of the element
+    //The visible text of the project
     private String text;
 
-    //The href of the element
+    //The href of the project
     private String href;
 
-    public Element() {
+    public Project() {
     }
 
-    public Element(String text, String href) {
+    public Project(String text, String href) {
         this.text = text;
         this.href = href;
     }

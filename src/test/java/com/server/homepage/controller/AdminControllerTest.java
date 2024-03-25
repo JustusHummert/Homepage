@@ -1,9 +1,9 @@
 package com.server.homepage.controller;
 
 import com.server.homepage.entities.Admin;
-import com.server.homepage.entities.Element;
+import com.server.homepage.entities.Project;
 import com.server.homepage.repositories.AdminRepository;
-import com.server.homepage.repositories.ElementRepository;
+import com.server.homepage.repositories.ProjectRepository;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +24,7 @@ class AdminControllerTest {
     @Autowired
     private AdminRepository adminRepository;
     @Autowired
-    private ElementRepository elementRepository;
+    private ProjectRepository projectRepository;
 
     @Test
     void login() throws Exception {
@@ -52,37 +52,37 @@ class AdminControllerTest {
 
     @Test
     @Transactional
-    void addElement() throws Exception {
+    void addProject() throws Exception {
         MockHttpSession session = new MockHttpSession();
         //not logged in
-        mvc.perform(post("/admin/addElement")
+        mvc.perform(post("/admin/addProject")
                 .param("text", "text")
                 .param("href", "href")
                 .session(session))
                 .andExpect(content().string("not logged in"));
         //logged in
         session.setAttribute("admin", true);
-        mvc.perform(post("/admin/addElement")
+        mvc.perform(post("/admin/addProject")
                 .param("text", "text")
                 .param("href", "href")
                 .session(session))
                 .andExpect(content().string("added"));
-        elementRepository.deleteByText("text");
+        projectRepository.deleteByText("text");
     }
 
     @Test
-    void deleteElement() throws Exception{
+    void deleteProject() throws Exception{
         MockHttpSession session = new MockHttpSession();
-        elementRepository.save(new Element("text", "href"));
-        Integer id = elementRepository.findByText("text").iterator().next().getId();
+        projectRepository.save(new Project("text", "href"));
+        Integer id = projectRepository.findByText("text").iterator().next().getId();
         //not logged in
-        mvc.perform(post("/admin/deleteElement")
+        mvc.perform(post("/admin/deleteProject")
                 .param("id", id.toString())
                 .session(session))
                 .andExpect(content().string("not logged in"));
         //logged in
         session.setAttribute("admin", true);
-        mvc.perform(post("/admin/deleteElement")
+        mvc.perform(post("/admin/deleteProject")
                 .param("id", id.toString())
                 .session(session))
                 .andExpect(content().string("deleted"));

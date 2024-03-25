@@ -30,21 +30,21 @@
             <input type="text" id="href" aria-label="href" placeholder="Enter href"/>
         </p>
         <p>
-            <button type="button" id="addElementBtn">add</button>
+            <button type="button" id="addProjectBtn">add</button>
         </p>
     </form>
     <table>
         <tbody>
-            <tr th:each="element: ${elements}">
+            <tr th:each="project: ${projects}">
                 <td
-                    th:text="${element.text}">
+                    th:text="${project.text}">
                 </td>
                 <td
-                    th:text="${element.href}">
+                    th:text="${project.href}">
                 </td>
                 <td>
-                    <button type="button" class="btn delete-Element"
-                            th:data-id="${element.id}">delete
+                    <button type="button" class="btn delete-Project"
+                            th:data-id="${project.id}">delete
                     </button>
                 </td>
             </tr>
@@ -59,11 +59,11 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <script>
     //add button functionality
-    $("#addElementBtn").click(function () {
+    $("#addProjectBtn").click(function () {
         let text = $("#text").val();
         let href = $("#href").val();
         $.ajax({
-            url: "/admin/addElement",
+            url: "/admin/addProject",
             method: "post",
             data: {
                 text: text,
@@ -83,10 +83,10 @@
             });
     });
     //delete button functionality
-    $(".delete-Element").click(function () {
+    $(".delete-Project").click(function () {
         let id = $(this).data("id");
         $.ajax({
-            url: "/admin/deleteElement",
+            url: "/admin/deleteProject",
             method: "post",
             data: {
                 id: id
@@ -148,7 +148,7 @@
     $("#href").keypress(function (e) {
         if (e.key == "Enter") {
             e.preventDefault();
-            $("#addElementBtn").click();
+            $("#addProjectBtn").click();
         }
     });
     $("#password").keypress(function (e) {

@@ -42,9 +42,9 @@
                     Projekte
                     <table>
                         <tbody>
-                            <tr th:each="element: ${elements}">
+                            <tr th:each="project: ${projects}">
                                 <td>
-                                    <a th:text="${element.text}" th:href="${element.href}"></a>
+                                    <a th:text="${project.text}" th:href="${project.href}"></a>
                                 </td>
                             </tr>
                         </tbody>
