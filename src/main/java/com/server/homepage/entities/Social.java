@@ -1,5 +1,6 @@
 package com.server.homepage.entities;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
@@ -18,6 +19,7 @@ public class Social {
     private String href;
 
     //The icon of the social as html element
+    @Column(columnDefinition = "LONGTEXT")
     private String icon;
 
     public Social() {
