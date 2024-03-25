@@ -1,18 +1,19 @@
 package com.server.homepage.controller;
 
-import com.server.homepage.entities.Element;
+import com.server.homepage.entities.Project;
+import com.server.homepage.entities.Social;
 import com.server.homepage.repositories.AdminRepository;
 import com.server.homepage.entities.Admin;
-import com.server.homepage.repositories.ElementRepository;
+import com.server.homepage.repositories.ProjectRepository;
+import com.server.homepage.repositories.SocialRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 
 @Controller
@@ -22,7 +23,10 @@ public class AdminController {
     private AdminRepository adminRepository;
 
     @Autowired
-    private ElementRepository elementRepository;
+    private ProjectRepository projectRepository;
+
+    @Autowired
+    private SocialRepository socialRepository;
 
     //check if the admin is logged in
     @ModelAttribute("admin")
@@ -45,21 +49,40 @@ public class AdminController {
         return "wrong password";
     }
 
-    //Add an element
-    @PostMapping("/addElement")
-    public @ResponseBody String addElement(@ModelAttribute("admin") boolean admin, String text, String href){
+    //Add a project
+    @PostMapping("/addProject")
+    public @ResponseBody String addProject(@ModelAttribute("admin") boolean admin, String text, String href){
         if(!admin)
             return "not logged in";
-        elementRepository.save(new Element(text, href));
+        projectRepository.save(new Project(text, href));
         return "added";
     }
 
-    //Delete an element
-    @PostMapping("/deleteElement")
-    public @ResponseBody String deleteElement(@ModelAttribute("admin") boolean admin, Integer id){
+    //Delete a project
+    @PostMapping("/deleteProject")
+    public @ResponseBody String deleteProject(@ModelAttribute("admin") boolean admin, Integer id){
         if(!admin)
             return "not logged in";
-        elementRepository.deleteById(id);
+        projectRepository.deleteById(id);
+        return "deleted";
+    }
+
+    //Add a social
+    @PostMapping("/addSocial")
+    public @ResponseBody String addSocial(@ModelAttribute("admin") boolean admin, String text, String href,
+                                          @RequestParam(required = false) String icon){
+        if(!admin)
+            return "not logged in";
+        socialRepository.save(new Social(text, href, icon));
+        return "added";
+    }
+
+    //Delete a social
+    @PostMapping("/deleteSocial")
+    public @ResponseBody String deleteSocial(@ModelAttribute("admin") boolean admin, Integer id){
+        if(!admin)
+            return "not logged in";
+        socialRepository.deleteById(id);
         return "deleted";
     }
 }
