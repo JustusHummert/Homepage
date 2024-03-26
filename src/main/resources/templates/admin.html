@@ -76,6 +76,14 @@
                 </tr>
             </tbody>
         </table>
+        <h2>Image</h2>
+        <p>
+            <form>
+                <input type="file" id="image" aria-label="image"/>
+                <button type="button" id="addImageBtn">upload</button>
+            </form>
+            <img width="591" height="886" src="/image" alt=""/>
+        </p>
     <div id="modal" class="modal">
         <div>
             <input type="password" id="password" aria-label="password"/>
@@ -203,6 +211,33 @@
             });
     });    
 
+    //addImage button functionality
+    $("#addImageBtn").click(function () {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+           let image = e.target.result;
+           $.ajax({
+            url: "/admin/addImage",
+            method: "post",
+            data: {
+                image: image
+            },
+            dataType: "text",
+        })
+            .done(function (data) {
+                console.info(data);
+                if(data=="added")
+                    location.reload();
+                if(data=="not logged in")
+                    openModal();
+            })
+            .fail(function (jqXHR, textStatus, errorThrown) {
+                console.error(jqXHR, textStatus, errorThrown);
+            });
+    }
+    reader.readAsDataURL($("#image")[0].files[0]);
+    });
+        
     function openModal(){
         modal.style.display = "block";
         $("#password").focus();
