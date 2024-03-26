@@ -1,13 +1,16 @@
 package com.server.homepage.controller;
 
+import com.server.homepage.entities.Image;
 import com.server.homepage.entities.Project;
 import com.server.homepage.entities.Social;
 import com.server.homepage.repositories.AdminRepository;
 import com.server.homepage.entities.Admin;
+import com.server.homepage.repositories.ImageRepository;
 import com.server.homepage.repositories.ProjectRepository;
 import com.server.homepage.repositories.SocialRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.crypto.bcrypt.BCrypt;
@@ -27,6 +30,9 @@ public class AdminController {
 
     @Autowired
     private SocialRepository socialRepository;
+
+    @Autowired
+    private ImageRepository imageRepository;
 
     //check if the admin is logged in
     @ModelAttribute("admin")
@@ -84,5 +90,18 @@ public class AdminController {
             return "not logged in";
         socialRepository.deleteById(id);
         return "deleted";
+    }
+
+    //Add an image
+    @PostMapping("/addImage")
+    public @ResponseBody String addImage(@ModelAttribute("admin") boolean admin, String image){
+        if(!admin)
+            return "not logged in";
+        //remove part before base64
+        String imageString = image.substring(image.indexOf("base64,") + 7);
+        //extract the media type
+        String mediaType = image.substring(image.indexOf("data:") + 5, image.indexOf(";"));
+        imageRepository.save(new Image(imageString, mediaType));
+        return "added";
     }
 }

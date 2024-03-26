@@ -1,9 +1,11 @@
 package com.server.homepage.controller;
 
 import com.server.homepage.entities.Admin;
+import com.server.homepage.entities.Image;
 import com.server.homepage.entities.Project;
 import com.server.homepage.entities.Social;
 import com.server.homepage.repositories.AdminRepository;
+import com.server.homepage.repositories.ImageRepository;
 import com.server.homepage.repositories.ProjectRepository;
 import com.server.homepage.repositories.SocialRepository;
 import jakarta.transaction.Transactional;
@@ -15,6 +17,9 @@ import org.springframework.mock.web.MockHttpSession;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 
@@ -29,6 +34,8 @@ class AdminControllerTest {
     private ProjectRepository projectRepository;
     @Autowired
     private SocialRepository socialRepository;
+    @Autowired
+    private ImageRepository imageRepository;
 
     @Test
     void login() throws Exception {
@@ -128,5 +135,29 @@ class AdminControllerTest {
                 .param("id", id.toString())
                 .session(session))
                 .andExpect(content().string("deleted"));
+    }
+
+    @Test
+    void addImage() throws Exception{
+        Optional<Image> oldImage = imageRepository.findById(0);
+        MockHttpSession session = new MockHttpSession();
+        //not logged in
+        mvc.perform(post("/admin/addImage")
+                .param("image", "image")
+                .session(session))
+                .andExpect(content().string("not logged in"));
+        //logged in
+        session.setAttribute("admin", true);
+        mvc.perform(post("/admin/addImage")
+                .param("image", "data:image/png;base64,image")
+                .session(session))
+                .andExpect(content().string("added"));
+        Optional<Image> optionalNewImage = imageRepository.findById(0);
+        assertTrue(optionalNewImage.isPresent());
+        Image newImage = optionalNewImage.get();
+        assertEquals("image", newImage.getImage());
+        assertEquals("image/png", newImage.getMediaType());
+        imageRepository.deleteAll();
+        oldImage.ifPresent(image -> imageRepository.save(image));
     }
 }
