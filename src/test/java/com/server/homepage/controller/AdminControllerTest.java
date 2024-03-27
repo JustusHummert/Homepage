@@ -1,13 +1,7 @@
 package com.server.homepage.controller;
 
-import com.server.homepage.entities.Admin;
-import com.server.homepage.entities.Image;
-import com.server.homepage.entities.Project;
-import com.server.homepage.entities.Social;
-import com.server.homepage.repositories.AdminRepository;
-import com.server.homepage.repositories.ImageRepository;
-import com.server.homepage.repositories.ProjectRepository;
-import com.server.homepage.repositories.SocialRepository;
+import com.server.homepage.entities.*;
+import com.server.homepage.repositories.*;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +30,8 @@ class AdminControllerTest {
     private SocialRepository socialRepository;
     @Autowired
     private ImageRepository imageRepository;
+    @Autowired
+    private TitleRepository titleRepository;
 
     @Test
     void login() throws Exception {
@@ -159,5 +155,51 @@ class AdminControllerTest {
         assertEquals("image/png", newImage.getMediaType());
         imageRepository.deleteAll();
         oldImage.ifPresent(image -> imageRepository.save(image));
+    }
+
+    @Test
+    void changeTitle() throws Exception{
+        Optional<Title> oldTitle = titleRepository.findById(0);
+        MockHttpSession session = new MockHttpSession();
+        //not logged in
+        mvc.perform(post("/admin/changeTitle")
+                .param("title", "title")
+                .session(session))
+                .andExpect(content().string("not logged in"));
+        //logged in
+        session.setAttribute("admin", true);
+        mvc.perform(post("/admin/changeTitle")
+                .param("title", "title")
+                .session(session))
+                .andExpect(content().string("changed"));
+        Optional<Title> optionalNewTitle = titleRepository.findById(0);
+        assertTrue(optionalNewTitle.isPresent());
+        Title newTitle = optionalNewTitle.get();
+        assertEquals("title", newTitle.getTitle());
+        titleRepository.deleteAll();
+        oldTitle.ifPresent(title -> titleRepository.save(title));
+    }
+
+    @Test
+    void changeProjectsTitle() throws Exception{
+        Optional<Title> oldTitle = titleRepository.findById(0);
+        MockHttpSession session = new MockHttpSession();
+        //not logged in
+        mvc.perform(post("/admin/changeProjectsTitle")
+                .param("projectsTitle", "projectsTitle")
+                .session(session))
+                .andExpect(content().string("not logged in"));
+        //logged in
+        session.setAttribute("admin", true);
+        mvc.perform(post("/admin/changeProjectsTitle")
+                .param("projectsTitle", "projectsTitle")
+                .session(session))
+                .andExpect(content().string("changed"));
+        Optional<Title> optionalNewTitle = titleRepository.findById(0);
+        assertTrue(optionalNewTitle.isPresent());
+        Title newTitle = optionalNewTitle.get();
+        assertEquals("projectsTitle", newTitle.getProjectsTitle());
+        titleRepository.deleteAll();
+        oldTitle.ifPresent(title -> titleRepository.save(title));
     }
 }

@@ -22,6 +22,21 @@
 </head>
 <body>
     <h1>Admin</h1>
+        <h2>Title</h2>
+        <p>
+            <form>
+                <input type="text" id="title" aria-label="title" placeholder="Enter title"/>
+                <button type="button" id="changeTitleBtn">add</button>
+            </form>
+        </p>
+        <p th:text="${title.title}"></p>
+        <p>
+            <form>
+                <input type="text" id="projectsTitle" aria-label="projectsTitle" placeholder="Enter projects title"/>
+                <button type="button" id="changeProjectsTitleBtn">add</button>
+            </form>
+        </p>
+        <p th:text="${title.projectsTitle}"></p>
         <h2>Socials</h2>
         <p>
             <form>
@@ -92,6 +107,53 @@
     </div>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <script>
+    //changeTitle button functionality
+    $("#changeTitleBtn").click(function () {
+        let title = $("#title").val();
+        $.ajax({
+            url: "/admin/changeTitle",
+            method: "post",
+            data: {
+                title: title
+            },
+            dataType: "text",
+        })
+            .done(function (data) {
+                console.info(data);
+                if(data=="changed")
+                    location.reload();
+                if(data=="not logged in")
+                    openModal();
+            })
+            .fail(function (jqXHR, textStatus, errorThrown) {
+                console.error(jqXHR, textStatus, errorThrown);
+            });
+    });
+
+    //changeProjectsTitle button functionality
+    $("#changeProjectsTitleBtn").click(function () {
+        let projectsTitle = $("#projectsTitle").val();
+        $.ajax({
+            url: "/admin/changeProjectsTitle",
+            method: "post",
+            data: {
+                projectsTitle: projectsTitle
+            },
+            dataType: "text",
+        })
+            .done(function (data) {
+                console.info(data);
+                if(data=="changed")
+                    location.reload();
+                if(data=="not logged in")
+                    openModal();
+            })
+            .fail(function (jqXHR, textStatus, errorThrown) {
+                console.error(jqXHR, textStatus, errorThrown);
+            });
+    });
+
+
     //addSocial button functionality
     $("#addSocialBtn").click(function () {
         let text = $("#socialText").val();
@@ -245,11 +307,21 @@
 
     function closeModal(){
         modal.style.display = "none";
-        $("#href").focus();
     }
 
-
     //make buttons react to Enter
+    $("#title").keypress(function (e) {
+        if (e.key == "Enter") {
+            e.preventDefault();
+            $("#changeTitleBtn").click();
+        }
+    });
+    $("#projectsTitle").keypress(function (e) {
+        if (e.key == "Enter") {
+            e.preventDefault();
+            $("#changeProjectsTitleBtn").click();
+        }
+    });
     $("#text").keypress(function (e) {
         if (e.key == "Enter") {
             e.preventDefault();

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="de">
     <head>
-        <title>Justus Hummert</title>
+        <title th:text="${title.title}"></title>
         <link rel="icon"
         type="image/x-icon"
         href="Favicon.ico">
@@ -31,7 +31,7 @@
                     </table>                   
                 </div>
                 <div class="space">
-                    Projekte
+                    <h2 th:text="${title.projectsTitle}"></h2>
                     <table>
                         <tbody>
                             <tr th:each="project: ${projects}">

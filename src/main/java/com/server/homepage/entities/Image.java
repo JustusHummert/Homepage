@@ -7,6 +7,7 @@ import org.springframework.http.MediaType;
 
 @Entity
 public class Image {
+    //ID of the only image
     @Id
     private Integer id = 0;
 

@@ -3,6 +3,7 @@ import com.server.homepage.entities.Image;
 import com.server.homepage.repositories.ImageRepository;
 import com.server.homepage.repositories.ProjectRepository;
 import com.server.homepage.repositories.SocialRepository;
+import com.server.homepage.repositories.TitleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -27,10 +28,14 @@ public class WebController {
     @Autowired
     private ImageRepository imageRepository;
 
+    @Autowired
+    private TitleRepository titleRepository;
+
     @GetMapping("")
     public String homepage(Model model){
         model.addAttribute("projects", projectRepository.findAll());
         model.addAttribute("socials", socialRepository.findAll());
+        model.addAttribute("title", titleRepository.findById(0).orElse(null));
         return "homepage";
     }
 
@@ -38,6 +43,7 @@ public class WebController {
     public String admin(Model model){
         model.addAttribute("projects", projectRepository.findAll());
         model.addAttribute("socials", socialRepository.findAll());
+        model.addAttribute("title", titleRepository.findById(0).orElse(null));
         return "admin";
     }
 
