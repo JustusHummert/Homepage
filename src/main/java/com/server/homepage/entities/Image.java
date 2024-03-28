@@ -12,12 +12,12 @@ public class Image {
     private Integer id = 0;
 
     //The image shown on the homepage
-    @Column(columnDefinition = "LONGTEXT")
-    private String image;
+    @Column(columnDefinition = "LONGBLOB")
+    private byte[] image;
 
     //The favicon of the homepage
-    @Column(columnDefinition = "LONGTEXT")
-    private String favicon;
+    @Column(columnDefinition = "LONGBLOB")
+    private byte[] favicon;
 
     //The Media type of the image
     private String mediaType;
@@ -33,14 +33,6 @@ public class Image {
         this.id = id;
     }
 
-    public String getImage() {
-        return image;
-    }
-
-    public void setImage(String image) {
-        this.image = image;
-    }
-
     public String getMediaType() {
         return mediaType;
     }
@@ -49,11 +41,19 @@ public class Image {
         this.mediaType = mediaType;
     }
 
-    public String getFavicon() {
+    public byte[] getImage() {
+        return image;
+    }
+
+    public void setImage(byte[] image) {
+        this.image = image;
+    }
+
+    public byte[] getFavicon() {
         return favicon;
     }
 
-    public void setFavicon(String favicon) {
+    public void setFavicon(byte[] favicon) {
         this.favicon = favicon;
     }
 }

@@ -11,6 +11,8 @@ import org.springframework.mock.web.MockHttpSession;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.Arrays;
+import java.util.Base64;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -32,6 +34,10 @@ class AdminControllerTest {
     private ImageRepository imageRepository;
     @Autowired
     private TitleRepository titleRepository;
+
+    //10 * 10 png with black rectangle
+    private static final String testPicture = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAACXBIWXMAAA7DAAAOwwHHb6hkAAAAGXRFWHRTb2Z0d2FyZQB3d3cuaW5rc2NhcGUub3Jnm+48GgAAAEFJREFUGJVjZIAAIQYGBm4G7OAnAwPDKxhnAQMDw38c+DADAwMDEw5TMMAAKmSE0uYMDAyKONS8ZmBg2EusgTQAAPeUC2hoB/iaAAAAAElFTkSuQmCC";
+    private static final String testPictureWithoutHeader = "iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAACXBIWXMAAA7DAAAOwwHHb6hkAAAAGXRFWHRTb2Z0d2FyZQB3d3cuaW5rc2NhcGUub3Jnm+48GgAAAEFJREFUGJVjZIAAIQYGBm4G7OAnAwPDKxhnAQMDw38c+DADAwMDEw5TMMAAKmSE0uYMDAyKONS8ZmBg2EusgTQAAPeUC2hoB/iaAAAAAElFTkSuQmCC";
 
     @Test
     void login() throws Exception {
@@ -145,16 +151,17 @@ class AdminControllerTest {
         //logged in
         session.setAttribute("admin", true);
         mvc.perform(post("/admin/changeImage")
-                .param("image", "data:image/png;base64,image")
+                .param("image", testPicture)
                 .session(session))
                 .andExpect(content().string("changed"));
         Optional<Image> optionalNewImage = imageRepository.findById(0);
         assertTrue(optionalNewImage.isPresent());
         Image newImage = optionalNewImage.get();
-        assertEquals("image", newImage.getImage());
+        String image = Arrays.toString(Base64.getDecoder().decode(testPictureWithoutHeader));
+        assertEquals(image, Arrays.toString(newImage.getImage()));
         assertEquals("image/png", newImage.getMediaType());
         imageRepository.deleteAll();
-        oldImage.ifPresent(image -> imageRepository.save(image));
+        oldImage.ifPresent(imageEntity -> imageRepository.save(imageEntity));
     }
 
     @Test
@@ -163,19 +170,20 @@ class AdminControllerTest {
         MockHttpSession session = new MockHttpSession();
         //not logged in
         mvc.perform(post("/admin/changeFavicon")
-                .param("favicon", "data:image/x_icon;base64,favicon")
+                .param("favicon", testPicture)
                 .session(session))
                 .andExpect(content().string("not logged in"));
         //logged in
         session.setAttribute("admin", true);
         mvc.perform(post("/admin/changeFavicon")
-                .param("favicon", "data:image/x_icon;base64,favicon")
+                .param("favicon", testPicture)
                 .session(session))
                 .andExpect(content().string("changed"));
         Optional<Image> optionalNewImage = imageRepository.findById(0);
         assertTrue(optionalNewImage.isPresent());
         Image newImage = optionalNewImage.get();
-        assertEquals("favicon", newImage.getFavicon());
+        String favicon = Arrays.toString(Base64.getDecoder().decode(testPictureWithoutHeader));
+        assertEquals(favicon, Arrays.toString(newImage.getFavicon()));
         imageRepository.deleteAll();
         oldImage.ifPresent(image -> imageRepository.save(image));
     }

@@ -4,13 +4,11 @@ import com.server.homepage.entities.*;
 import com.server.homepage.repositories.*;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.Optional;
 
 @Controller
@@ -96,11 +94,12 @@ public class AdminController {
             return "not logged in";
         //remove part before base64
         String imageString = image.substring(image.indexOf("base64,") + 7);
+        byte[] decodedImage = Base64.getDecoder().decode(imageString);
         //extract the media type
         String mediaType = image.substring(image.indexOf("data:") + 5, image.indexOf(";"));
         Optional<Image> optionalImage = imageRepository.findById(0);
         Image imageEntity = optionalImage.orElseGet(Image::new);
-        imageEntity.setImage(imageString);
+        imageEntity.setImage(decodedImage);
         imageEntity.setMediaType(mediaType);
         imageRepository.save(imageEntity);
         return "changed";
@@ -113,10 +112,11 @@ public class AdminController {
             return "not logged in";
         //remove part before base64
         String faviconString = favicon.substring(favicon.indexOf("base64,") + 7);
+        byte[] decodedFavicon = Base64.getDecoder().decode(faviconString);
         //extract the media type
         Optional<Image> optionalImage = imageRepository.findById(0);
         Image imageEntity = optionalImage.orElseGet(Image::new);
-        imageEntity.setFavicon(faviconString);
+        imageEntity.setFavicon(decodedFavicon);
         imageRepository.save(imageEntity);
         return "changed";
     }
