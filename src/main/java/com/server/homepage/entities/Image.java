@@ -15,15 +15,14 @@ public class Image {
     @Column(columnDefinition = "LONGTEXT")
     private String image;
 
+    //The favicon of the homepage
+    @Column(columnDefinition = "LONGTEXT")
+    private String favicon;
+
     //The Media type of the image
     private String mediaType;
 
     public Image() {
-    }
-
-    public Image(String image, String mediaType) {
-        this.image = image;
-        this.mediaType = mediaType;
     }
 
     public Integer getId() {
@@ -48,5 +47,13 @@ public class Image {
 
     public void setMediaType(String mediaType) {
         this.mediaType = mediaType;
+    }
+
+    public String getFavicon() {
+        return favicon;
+    }
+
+    public void setFavicon(String favicon) {
+        this.favicon = favicon;
     }
 }

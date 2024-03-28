@@ -58,4 +58,16 @@ public class WebController {
         headers.add(HttpHeaders.CONTENT_TYPE, image.getMediaType());
         return new ResponseEntity<>(decodedImage, headers, HttpStatus.OK);
     }
+
+    @GetMapping("/favicon.ico")
+    public ResponseEntity<byte[]> favicon(){
+        Optional<Image> optionalImage = imageRepository.findById(0);
+        if (optionalImage.isEmpty())
+            return ResponseEntity.notFound().build();
+        Image image = optionalImage.get();
+        byte[] decodedImage = Base64.getDecoder().decode(image.getFavicon());
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.CONTENT_TYPE, "image/x-icon");
+        return new ResponseEntity<>(decodedImage, headers, HttpStatus.OK);
+    }
 }

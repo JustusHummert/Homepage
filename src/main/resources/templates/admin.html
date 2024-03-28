@@ -91,11 +91,19 @@
                 </tr>
             </tbody>
         </table>
+        <h2>Favicon</h2>
+        <p>
+            <form>
+                <input type="file" id="favicon" aria-label="favicon"/>
+                <button type="button" id="changeFaviconBtn">upload</button>
+            </form>
+            <img src="/favicon.ico" alt=""/>
+        </p>
         <h2>Image</h2>
         <p>
             <form>
                 <input type="file" id="image" aria-label="image"/>
-                <button type="button" id="addImageBtn">upload</button>
+                <button type="button" id="changeImageBtn">upload</button>
             </form>
             <img src="/image" alt=""/>
         </p>
@@ -273,13 +281,40 @@
             });
     });    
 
-    //addImage button functionality
-    $("#addImageBtn").click(function () {
+    //changeFavicon button functionality
+    $("#changeFaviconBtn").click(function () {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+           let favicon = e.target.result;
+           $.ajax({
+            url: "/admin/changeFavicon",
+            method: "post",
+            data: {
+                favicon: favicon
+            },
+            dataType: "text",
+        })
+            .done(function (data) {
+                console.info(data);
+                if(data=="changed")
+                    location.reload();
+                if(data=="not logged in")
+                    openModal();
+            })
+            .fail(function (jqXHR, textStatus, errorThrown) {
+                console.error(jqXHR, textStatus, errorThrown);
+            });
+    }
+    reader.readAsDataURL($("#favicon")[0].files[0]);
+    });
+
+    //changeImage button functionality
+    $("#changeImageBtn").click(function () {
         const reader = new FileReader();
         reader.onload = function(e) {
            let image = e.target.result;
            $.ajax({
-            url: "/admin/addImage",
+            url: "/admin/changeImage",
             method: "post",
             data: {
                 image: image
@@ -288,7 +323,7 @@
         })
             .done(function (data) {
                 console.info(data);
-                if(data=="added")
+                if(data=="changed")
                     location.reload();
                 if(data=="not logged in")
                     openModal();

@@ -134,25 +134,48 @@ class AdminControllerTest {
     }
 
     @Test
-    void addImage() throws Exception{
+    void changeImage() throws Exception{
         Optional<Image> oldImage = imageRepository.findById(0);
         MockHttpSession session = new MockHttpSession();
         //not logged in
-        mvc.perform(post("/admin/addImage")
+        mvc.perform(post("/admin/changeImage")
                 .param("image", "image")
                 .session(session))
                 .andExpect(content().string("not logged in"));
         //logged in
         session.setAttribute("admin", true);
-        mvc.perform(post("/admin/addImage")
+        mvc.perform(post("/admin/changeImage")
                 .param("image", "data:image/png;base64,image")
                 .session(session))
-                .andExpect(content().string("added"));
+                .andExpect(content().string("changed"));
         Optional<Image> optionalNewImage = imageRepository.findById(0);
         assertTrue(optionalNewImage.isPresent());
         Image newImage = optionalNewImage.get();
         assertEquals("image", newImage.getImage());
         assertEquals("image/png", newImage.getMediaType());
+        imageRepository.deleteAll();
+        oldImage.ifPresent(image -> imageRepository.save(image));
+    }
+
+    @Test
+    void changeFavicon() throws Exception{
+        Optional<Image> oldImage = imageRepository.findById(0);
+        MockHttpSession session = new MockHttpSession();
+        //not logged in
+        mvc.perform(post("/admin/changeFavicon")
+                .param("favicon", "data:image/x_icon;base64,favicon")
+                .session(session))
+                .andExpect(content().string("not logged in"));
+        //logged in
+        session.setAttribute("admin", true);
+        mvc.perform(post("/admin/changeFavicon")
+                .param("favicon", "data:image/x_icon;base64,favicon")
+                .session(session))
+                .andExpect(content().string("changed"));
+        Optional<Image> optionalNewImage = imageRepository.findById(0);
+        assertTrue(optionalNewImage.isPresent());
+        Image newImage = optionalNewImage.get();
+        assertEquals("favicon", newImage.getFavicon());
         imageRepository.deleteAll();
         oldImage.ifPresent(image -> imageRepository.save(image));
     }
