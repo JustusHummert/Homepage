@@ -6,18 +6,20 @@
             div{
                 float: left;
             }
-            .space{
+            .vspace{
                 padding-left: 10%;
-                padding-top: 5%;
+            }
+            .hspace{
+                padding-top: 10%;
             }
         </style>
     </head>
     <body>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
                 <div>
-                    <img src="/image" alt=""/>
+                    <img src="/image"/>
                 </div>
-                <div>
+                <div id="socials">
                     <table>
                         <tbody>
                             <tr th:each="social: ${socials}">
@@ -27,7 +29,7 @@
                         </tbody>
                     </table>                   
                 </div>
-                <div class="space">
+                <div id="projects">
                     <h2 th:text="${title.projectsTitle}"></h2>
                     <table>
                         <tbody>
@@ -40,4 +42,45 @@
                     </table>
                 </div>
     </body>
+    <script>
+        //Add vspace to projects if they are on the right of socials
+        //Add hspace to projects if they are under socials
+        function updateProjects(){
+            var projects = document.getElementById("projects");
+            projects.classList.remove("vspace");
+            projects.classList.remove("hspace");
+            projects.style.width = "auto";
+            if(projectsOnRightOfSocials()){
+                projects.classList.add("vspace");
+            }
+            if(projectsUnderSocials()){
+                projects.classList.add("hspace");
+                //if vspace is also set, remove it and increase the width by 10% of the screen
+                //to make sure the projects do not jump back to the right of the socials where they do not fit
+                projects.classList.remove("vspace");
+                projects.style.width = projects.getBoundingClientRect().width + window.innerWidth * 0.1 + "px";
+            }
+        }
+
+        window.onload = function(){
+            updateProjects();
+        }
+        window.onresize = function(){
+            updateProjects();
+        }
+
+        //check if the projects are on the right of the socials
+        function projectsOnRightOfSocials(){
+            var projectsBounding = document.getElementById("projects").getBoundingClientRect();
+            var socialsBounding = document.getElementById("socials").getBoundingClientRect();
+            return projectsBounding.left >= socialsBounding.right && projectsBounding.top < socialsBounding.bottom && projectsBounding.bottom > socialsBounding.top;
+        }
+
+        //check if the if the projects are directly under the socials
+        function projectsUnderSocials(){
+            var projectsBounding = document.getElementById("projects").getBoundingClientRect();
+            var socialsBounding = document.getElementById("socials").getBoundingClientRect();
+            return projectsBounding.left < socialsBounding.right && projectsBounding.right > socialsBounding.left && projectsBounding.top >= socialsBounding.bottom;
+        }
+    </script>
 </html>
