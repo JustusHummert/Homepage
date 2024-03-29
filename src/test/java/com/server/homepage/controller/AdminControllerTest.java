@@ -1,13 +1,7 @@
 package com.server.homepage.controller;
 
-import com.server.homepage.entities.Admin;
-import com.server.homepage.entities.Image;
-import com.server.homepage.entities.Project;
-import com.server.homepage.entities.Social;
-import com.server.homepage.repositories.AdminRepository;
-import com.server.homepage.repositories.ImageRepository;
-import com.server.homepage.repositories.ProjectRepository;
-import com.server.homepage.repositories.SocialRepository;
+import com.server.homepage.entities.*;
+import com.server.homepage.repositories.*;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +11,8 @@ import org.springframework.mock.web.MockHttpSession;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.Arrays;
+import java.util.Base64;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -36,6 +32,12 @@ class AdminControllerTest {
     private SocialRepository socialRepository;
     @Autowired
     private ImageRepository imageRepository;
+    @Autowired
+    private TitleRepository titleRepository;
+
+    //10 * 10 png with black rectangle
+    private static final String testPicture = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAACXBIWXMAAA7DAAAOwwHHb6hkAAAAGXRFWHRTb2Z0d2FyZQB3d3cuaW5rc2NhcGUub3Jnm+48GgAAAEFJREFUGJVjZIAAIQYGBm4G7OAnAwPDKxhnAQMDw38c+DADAwMDEw5TMMAAKmSE0uYMDAyKONS8ZmBg2EusgTQAAPeUC2hoB/iaAAAAAElFTkSuQmCC";
+    private static final String testPictureWithoutHeader = "iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAACXBIWXMAAA7DAAAOwwHHb6hkAAAAGXRFWHRTb2Z0d2FyZQB3d3cuaW5rc2NhcGUub3Jnm+48GgAAAEFJREFUGJVjZIAAIQYGBm4G7OAnAwPDKxhnAQMDw38c+DADAwMDEw5TMMAAKmSE0uYMDAyKONS8ZmBg2EusgTQAAPeUC2hoB/iaAAAAAElFTkSuQmCC";
 
     @Test
     void login() throws Exception {
@@ -138,26 +140,97 @@ class AdminControllerTest {
     }
 
     @Test
-    void addImage() throws Exception{
+    void changeImage() throws Exception{
         Optional<Image> oldImage = imageRepository.findById(0);
         MockHttpSession session = new MockHttpSession();
         //not logged in
-        mvc.perform(post("/admin/addImage")
+        mvc.perform(post("/admin/changeImage")
                 .param("image", "image")
                 .session(session))
                 .andExpect(content().string("not logged in"));
         //logged in
         session.setAttribute("admin", true);
-        mvc.perform(post("/admin/addImage")
-                .param("image", "data:image/png;base64,image")
+        mvc.perform(post("/admin/changeImage")
+                .param("image", testPicture)
                 .session(session))
-                .andExpect(content().string("added"));
+                .andExpect(content().string("changed"));
         Optional<Image> optionalNewImage = imageRepository.findById(0);
         assertTrue(optionalNewImage.isPresent());
         Image newImage = optionalNewImage.get();
-        assertEquals("image", newImage.getImage());
+        String image = Arrays.toString(Base64.getDecoder().decode(testPictureWithoutHeader));
+        assertEquals(image, Arrays.toString(newImage.getImage()));
         assertEquals("image/png", newImage.getMediaType());
         imageRepository.deleteAll();
+        oldImage.ifPresent(imageEntity -> imageRepository.save(imageEntity));
+    }
+
+    @Test
+    void changeFavicon() throws Exception{
+        Optional<Image> oldImage = imageRepository.findById(0);
+        MockHttpSession session = new MockHttpSession();
+        //not logged in
+        mvc.perform(post("/admin/changeFavicon")
+                .param("favicon", testPicture)
+                .session(session))
+                .andExpect(content().string("not logged in"));
+        //logged in
+        session.setAttribute("admin", true);
+        mvc.perform(post("/admin/changeFavicon")
+                .param("favicon", testPicture)
+                .session(session))
+                .andExpect(content().string("changed"));
+        Optional<Image> optionalNewImage = imageRepository.findById(0);
+        assertTrue(optionalNewImage.isPresent());
+        Image newImage = optionalNewImage.get();
+        String favicon = Arrays.toString(Base64.getDecoder().decode(testPictureWithoutHeader));
+        assertEquals(favicon, Arrays.toString(newImage.getFavicon()));
+        imageRepository.deleteAll();
         oldImage.ifPresent(image -> imageRepository.save(image));
+    }
+
+    @Test
+    void changeTitle() throws Exception{
+        Optional<Title> oldTitle = titleRepository.findById(0);
+        MockHttpSession session = new MockHttpSession();
+        //not logged in
+        mvc.perform(post("/admin/changeTitle")
+                .param("title", "title")
+                .session(session))
+                .andExpect(content().string("not logged in"));
+        //logged in
+        session.setAttribute("admin", true);
+        mvc.perform(post("/admin/changeTitle")
+                .param("title", "title")
+                .session(session))
+                .andExpect(content().string("changed"));
+        Optional<Title> optionalNewTitle = titleRepository.findById(0);
+        assertTrue(optionalNewTitle.isPresent());
+        Title newTitle = optionalNewTitle.get();
+        assertEquals("title", newTitle.getTitle());
+        titleRepository.deleteAll();
+        oldTitle.ifPresent(title -> titleRepository.save(title));
+    }
+
+    @Test
+    void changeProjectsTitle() throws Exception{
+        Optional<Title> oldTitle = titleRepository.findById(0);
+        MockHttpSession session = new MockHttpSession();
+        //not logged in
+        mvc.perform(post("/admin/changeProjectsTitle")
+                .param("projectsTitle", "projectsTitle")
+                .session(session))
+                .andExpect(content().string("not logged in"));
+        //logged in
+        session.setAttribute("admin", true);
+        mvc.perform(post("/admin/changeProjectsTitle")
+                .param("projectsTitle", "projectsTitle")
+                .session(session))
+                .andExpect(content().string("changed"));
+        Optional<Title> optionalNewTitle = titleRepository.findById(0);
+        assertTrue(optionalNewTitle.isPresent());
+        Title newTitle = optionalNewTitle.get();
+        assertEquals("projectsTitle", newTitle.getProjectsTitle());
+        titleRepository.deleteAll();
+        oldTitle.ifPresent(title -> titleRepository.save(title));
     }
 }

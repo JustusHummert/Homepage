@@ -1,22 +1,14 @@
 package com.server.homepage.controller;
 
-import com.server.homepage.entities.Image;
-import com.server.homepage.entities.Project;
-import com.server.homepage.entities.Social;
-import com.server.homepage.repositories.AdminRepository;
-import com.server.homepage.entities.Admin;
-import com.server.homepage.repositories.ImageRepository;
-import com.server.homepage.repositories.ProjectRepository;
-import com.server.homepage.repositories.SocialRepository;
+import com.server.homepage.entities.*;
+import com.server.homepage.repositories.*;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.Optional;
 
 @Controller
@@ -33,6 +25,9 @@ public class AdminController {
 
     @Autowired
     private ImageRepository imageRepository;
+
+    @Autowired
+    private TitleRepository titleRepository;
 
     //check if the admin is logged in
     @ModelAttribute("admin")
@@ -92,16 +87,64 @@ public class AdminController {
         return "deleted";
     }
 
-    //Add an image
-    @PostMapping("/addImage")
-    public @ResponseBody String addImage(@ModelAttribute("admin") boolean admin, String image){
+    //Change the image
+    @PostMapping("/changeImage")
+    public @ResponseBody String changeImage(@ModelAttribute("admin") boolean admin, String image){
         if(!admin)
             return "not logged in";
         //remove part before base64
         String imageString = image.substring(image.indexOf("base64,") + 7);
+        byte[] decodedImage = Base64.getDecoder().decode(imageString);
         //extract the media type
         String mediaType = image.substring(image.indexOf("data:") + 5, image.indexOf(";"));
-        imageRepository.save(new Image(imageString, mediaType));
-        return "added";
+        Optional<Image> optionalImage = imageRepository.findById(0);
+        Image imageEntity = optionalImage.orElseGet(Image::new);
+        imageEntity.setImage(decodedImage);
+        imageEntity.setMediaType(mediaType);
+        imageRepository.save(imageEntity);
+        return "changed";
     }
+
+    //Change the favicon
+    @PostMapping("/changeFavicon")
+    public @ResponseBody String changeFavicon(@ModelAttribute("admin") boolean admin, String favicon){
+        if(!admin)
+            return "not logged in";
+        //remove part before base64
+        String faviconString = favicon.substring(favicon.indexOf("base64,") + 7);
+        byte[] decodedFavicon = Base64.getDecoder().decode(faviconString);
+        //extract the media type
+        Optional<Image> optionalImage = imageRepository.findById(0);
+        Image imageEntity = optionalImage.orElseGet(Image::new);
+        imageEntity.setFavicon(decodedFavicon);
+        imageRepository.save(imageEntity);
+        return "changed";
+    }
+
+    //Change the Title
+    @PostMapping("/changeTitle")
+    public @ResponseBody String changeTitle(@ModelAttribute("admin") boolean admin, String title){
+        if(!admin)
+            return "not logged in";
+        Optional<Title> optionalTitle = titleRepository.findById(0);
+        Title titleEntity = optionalTitle.orElseGet(Title::new);
+        titleEntity.setTitle(title);
+        titleRepository.save(titleEntity);
+        return "changed";
+    }
+
+    //Change the projects title
+    @PostMapping("/changeProjectsTitle")
+    public @ResponseBody String changeProjectsTitle(@ModelAttribute("admin") boolean admin, String projectsTitle) {
+        if (!admin)
+            return "not logged in";
+        Optional<Title> optionalTitle = titleRepository.findById(0);
+        Title titleEntity = optionalTitle.orElseGet(Title::new);
+        titleEntity.setProjectsTitle(projectsTitle);
+        titleRepository.save(titleEntity);
+        return "changed";
+    }
+
+
+
 }
