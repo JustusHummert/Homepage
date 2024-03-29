@@ -1,5 +1,6 @@
 package com.server.homepage.controller;
 import com.server.homepage.entities.Image;
+import com.server.homepage.entities.Title;
 import com.server.homepage.repositories.ImageRepository;
 import com.server.homepage.repositories.ProjectRepository;
 import com.server.homepage.repositories.SocialRepository;
@@ -32,7 +33,7 @@ public class WebController {
     public String homepage(Model model){
         model.addAttribute("projects", projectRepository.findAll());
         model.addAttribute("socials", socialRepository.findAll());
-        model.addAttribute("title", titleRepository.findById(0).orElse(null));
+        model.addAttribute("title", titleRepository.findById(0).orElse(new Title("no title set", "no projects title set")));
         return "homepage";
     }
 
@@ -40,7 +41,7 @@ public class WebController {
     public String admin(Model model){
         model.addAttribute("projects", projectRepository.findAll());
         model.addAttribute("socials", socialRepository.findAll());
-        model.addAttribute("title", titleRepository.findById(0).orElse(null));
+        model.addAttribute("title", titleRepository.findById(0).orElse(new Title("no title set", "no projects title set")));
         return "admin";
     }
 
