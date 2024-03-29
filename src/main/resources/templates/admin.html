@@ -22,34 +22,91 @@
 </head>
 <body>
     <h1>Admin</h1>
-    <form>
+        <h2>Title</h2>
         <p>
-            <input type="text" id="text" aria-label="text" placeholder="Enter text"/>
+            <form>
+                <input type="text" id="title" aria-label="title" placeholder="Enter title"/>
+                <button type="button" id="changeTitleBtn">add</button>
+            </form>
         </p>
+        <p th:text="${title.title}"></p>
         <p>
-            <input type="text" id="href" aria-label="href" placeholder="Enter href"/>
+            <form>
+                <input type="text" id="projectsTitle" aria-label="projectsTitle" placeholder="Enter projects title"/>
+                <button type="button" id="changeProjectsTitleBtn">add</button>
+            </form>
         </p>
+        <p th:text="${title.projectsTitle}"></p>
+        <h2>Socials</h2>
         <p>
-            <button type="button" id="addElementBtn">add</button>
+            <form>
+                <input type="text" id="socialText" aria-label="socialText" placeholder="Enter text"/>
+                <input type="text" id="socialHref" aria-label="socialHref" placeholder="Enter href"/>
+                <input type="text" id="socialIcon" aria-label="socialIcon" placeholder="Enter icon"/>
+                <button type="button" id="addSocialBtn">add</button>
+            </form>
         </p>
-    </form>
-    <table>
-        <tbody>
-            <tr th:each="element: ${elements}">
-                <td
-                    th:text="${element.text}">
-                </td>
-                <td
-                    th:text="${element.href}">
-                </td>
-                <td>
-                    <button type="button" class="btn delete-Element"
-                            th:data-id="${element.id}">delete
-                    </button>
-                </td>
-            </tr>
-        </tbody>
-    </table>
+        <table>
+            <tbody>
+                <tr th:each="social: ${socials}">
+                    <td
+                        th:text="${social.text}">
+                    </td>
+                    <td
+                        th:text="${social.href}">
+                    </td>
+                    <td
+                        th:text="${social.icon}">
+                    </td>
+                    <td>
+                        <button type="button" class="btn delete-Social"
+                                th:data-id="${social.id}">delete
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <h2>Projects</h2>
+        <p>
+            <form>
+                <input type="text" id="text" aria-label="text" placeholder="Enter text"/>
+                <input type="text" id="href" aria-label="href" placeholder="Enter href"/>
+                <button type="button" id="addProjectBtn">add</button>
+            </form>
+        </p>
+        <table>
+            <tbody>
+                <tr th:each="project: ${projects}">
+                    <td
+                        th:text="${project.text}">
+                    </td>
+                    <td
+                        th:text="${project.href}">
+                    </td>
+                    <td>
+                        <button type="button" class="btn delete-Project"
+                                th:data-id="${project.id}">delete
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <h2>Favicon</h2>
+        <p>
+            <form>
+                <input type="file" id="favicon" aria-label="favicon"/>
+                <button type="button" id="changeFaviconBtn">upload</button>
+            </form>
+            <img src="/favicon.ico"/>
+        </p>
+        <h2>Image</h2>
+        <p>
+            <form>
+                <input type="file" id="image" aria-label="image"/>
+                <button type="button" id="changeImageBtn">upload</button>
+            </form>
+            <img src="/image"/>
+        </p>
     <div id="modal" class="modal">
         <div>
             <input type="password" id="password" aria-label="password"/>
@@ -58,12 +115,109 @@
     </div>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <script>
-    //add button functionality
-    $("#addElementBtn").click(function () {
+    //changeTitle button functionality
+    $("#changeTitleBtn").click(function () {
+        let title = $("#title").val();
+        $.ajax({
+            url: "/admin/changeTitle",
+            method: "post",
+            data: {
+                title: title
+            },
+            dataType: "text",
+        })
+            .done(function (data) {
+                console.info(data);
+                if(data=="changed")
+                    location.reload();
+                if(data=="not logged in")
+                    openModal();
+            })
+            .fail(function (jqXHR, textStatus, errorThrown) {
+                console.error(jqXHR, textStatus, errorThrown);
+            });
+    });
+
+    //changeProjectsTitle button functionality
+    $("#changeProjectsTitleBtn").click(function () {
+        let projectsTitle = $("#projectsTitle").val();
+        $.ajax({
+            url: "/admin/changeProjectsTitle",
+            method: "post",
+            data: {
+                projectsTitle: projectsTitle
+            },
+            dataType: "text",
+        })
+            .done(function (data) {
+                console.info(data);
+                if(data=="changed")
+                    location.reload();
+                if(data=="not logged in")
+                    openModal();
+            })
+            .fail(function (jqXHR, textStatus, errorThrown) {
+                console.error(jqXHR, textStatus, errorThrown);
+            });
+    });
+
+
+    //addSocial button functionality
+    $("#addSocialBtn").click(function () {
+        let text = $("#socialText").val();
+        let href = $("#socialHref").val();
+        let icon = $("#socialIcon").val();
+        $.ajax({
+            url: "/admin/addSocial",
+            method: "post",
+            data: {
+                text: text,
+                href: href,
+                icon: icon
+            },
+            dataType: "text",
+        })
+            .done(function (data) {
+                console.info(data);
+                if(data=="added")
+                    location.reload();
+                if(data=="not logged in")
+                    openModal();
+            })
+            .fail(function (jqXHR, textStatus, errorThrown) {
+                console.error(jqXHR, textStatus, errorThrown);
+            });
+    });
+
+    //deleteSocial button functionality
+    $(".delete-Social").click(function () {
+        let id = $(this).data("id");
+        $.ajax({
+            url: "/admin/deleteSocial",
+            method: "post",
+            data: {
+                id: id
+            },
+            dataType: "text",
+        })
+            .done(function (data) {
+                console.info(data);
+                if(data=="deleted")
+                    location.reload();
+                if(data=="not logged in")
+                    openModal();
+            })
+            .fail(function (jqXHR, textStatus, errorThrown) {
+                console.error(jqXHR, textStatus, errorThrown);
+            });
+    });
+
+    //addProject button functionality
+    $("#addProjectBtn").click(function () {
         let text = $("#text").val();
         let href = $("#href").val();
         $.ajax({
-            url: "/admin/addElement",
+            url: "/admin/addProject",
             method: "post",
             data: {
                 text: text,
@@ -82,11 +236,11 @@
                 console.error(jqXHR, textStatus, errorThrown);
             });
     });
-    //delete button functionality
-    $(".delete-Element").click(function () {
+    //deleteProject button functionality
+    $(".delete-Project").click(function () {
         let id = $(this).data("id");
         $.ajax({
-            url: "/admin/deleteElement",
+            url: "/admin/deleteProject",
             method: "post",
             data: {
                 id: id
@@ -127,6 +281,60 @@
             });
     });    
 
+    //changeFavicon button functionality
+    $("#changeFaviconBtn").click(function () {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+           let favicon = e.target.result;
+           $.ajax({
+            url: "/admin/changeFavicon",
+            method: "post",
+            data: {
+                favicon: favicon
+            },
+            dataType: "text",
+        })
+            .done(function (data) {
+                console.info(data);
+                if(data=="changed")
+                    location.reload();
+                if(data=="not logged in")
+                    openModal();
+            })
+            .fail(function (jqXHR, textStatus, errorThrown) {
+                console.error(jqXHR, textStatus, errorThrown);
+            });
+    }
+    reader.readAsDataURL($("#favicon")[0].files[0]);
+    });
+
+    //changeImage button functionality
+    $("#changeImageBtn").click(function () {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+           let image = e.target.result;
+           $.ajax({
+            url: "/admin/changeImage",
+            method: "post",
+            data: {
+                image: image
+            },
+            dataType: "text",
+        })
+            .done(function (data) {
+                console.info(data);
+                if(data=="changed")
+                    location.reload();
+                if(data=="not logged in")
+                    openModal();
+            })
+            .fail(function (jqXHR, textStatus, errorThrown) {
+                console.error(jqXHR, textStatus, errorThrown);
+            });
+    }
+    reader.readAsDataURL($("#image")[0].files[0]);
+    });
+        
     function openModal(){
         modal.style.display = "block";
         $("#password").focus();
@@ -134,11 +342,21 @@
 
     function closeModal(){
         modal.style.display = "none";
-        $("#href").focus();
     }
 
-
     //make buttons react to Enter
+    $("#title").keypress(function (e) {
+        if (e.key == "Enter") {
+            e.preventDefault();
+            $("#changeTitleBtn").click();
+        }
+    });
+    $("#projectsTitle").keypress(function (e) {
+        if (e.key == "Enter") {
+            e.preventDefault();
+            $("#changeProjectsTitleBtn").click();
+        }
+    });
     $("#text").keypress(function (e) {
         if (e.key == "Enter") {
             e.preventDefault();
@@ -148,7 +366,7 @@
     $("#href").keypress(function (e) {
         if (e.key == "Enter") {
             e.preventDefault();
-            $("#addElementBtn").click();
+            $("#addProjectBtn").click();
         }
     });
     $("#password").keypress(function (e) {
@@ -157,9 +375,24 @@
             $("#loginBtn").click();
         }
     });
-    //focus on text input
-    $("#text").focus();
-
+    $("#socialText").keypress(function (e) {
+        if (e.key == "Enter") {
+            e.preventDefault();
+            $("#socialHref").focus();
+        }
+    });
+    $("#socialHref").keypress(function (e) {
+        if (e.key == "Enter") {
+            e.preventDefault();
+            $("#socialIcon").focus();
+        }
+    });
+    $("#socialIcon").keypress(function (e) {
+        if (e.key == "Enter") {
+            e.preventDefault();
+            $("#addSocialBtn").click();
+        }
+    });
 
 
 

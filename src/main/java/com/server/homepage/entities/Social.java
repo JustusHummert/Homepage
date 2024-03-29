@@ -1,28 +1,34 @@
 package com.server.homepage.entities;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 
 @Entity
-public class Element {
+public class Social {
 
     @Id
     @GeneratedValue
     private Integer id;
 
-    //The visible text of the element
+    //The visible text of the social
     private String text;
 
-    //The href of the element
+    //The href of the social
     private String href;
 
-    public Element() {
+    //The icon of the social as html element
+    @Column(columnDefinition = "LONGTEXT")
+    private String icon;
+
+    public Social() {
     }
 
-    public Element(String text, String href) {
+    public Social(String text, String href, String icon) {
         this.text = text;
         this.href = href;
+        this.icon = icon;
     }
 
 
@@ -40,6 +46,14 @@ public class Element {
 
     public void setHref(String href) {
         this.href = href;
+    }
+
+    public String getIcon() {
+        return icon;
+    }
+
+    public void setIcon(String icon) {
+        this.icon = icon;
     }
 
     public Integer getId() {
