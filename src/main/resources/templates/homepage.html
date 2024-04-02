@@ -12,6 +12,11 @@
             .hspace{
                 padding-top: 10%;
             }
+            .divtext{
+                width: 400px;
+                overflow: auto;
+                
+            }
         </style>
     </head>
     <body>
@@ -36,7 +41,7 @@
                             <tr th:each="project: ${projects}">
                                 <td>
                                     <h3><a th:text="${project.text}" th:href="${project.href}"></a></h3>
-                                    <p th:text="${project.description}"></p>
+                                    <div th:text="${project.description}" class="divtext"></div>
                                 </td>
                             </tr>
                         </tbody>

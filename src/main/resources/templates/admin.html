@@ -15,6 +15,9 @@
         overflow: auto;
         background-color: rgba(0,0,0,0.4);
     }
+    .projectDescription{
+        width: 400px;
+    }
 </style>
 <head>
     <meta charset="UTF-8">
@@ -84,8 +87,11 @@
                     <td
                         th:text="${project.href}">
                     </td>
-                    <td
-                        th:text="${project.description}">
+                    <td>
+                        <textarea class="projectDescription" th:text="${project.description}"></textarea>
+                        <button type="button" class="btn change-Project-Description"
+                                th:data-id="${project.id}">change
+                        </button>
                     </td>
                     <td>
                         <button type="button" class="btn delete-Project"
@@ -265,6 +271,32 @@
             });
     });
 
+    //changeProjectDescription button functionality
+    $(".change-Project-Description").click(function () {
+        let id = $(this).data("id");
+        let description = $(this).parent().find(".projectDescription").val();
+        $.ajax({
+            url: "/admin/changeProjectDescription",
+            method: "post",
+            data: {
+                id: id,
+                description: description
+            },
+            dataType: "text",
+        })
+            .done(function (data) {
+                console.info(data);
+                if(data=="changed")
+                    location.reload();
+                if(data=="not logged in")
+                    openModal();
+            })
+            .fail(function (jqXHR, textStatus, errorThrown) {
+                console.error(jqXHR, textStatus, errorThrown);
+            });
+    });
+
+
     //login button functionality
     $("#loginBtn").click(function () {
         let password = $("#password").val();
@@ -399,9 +431,23 @@
             $("#addSocialBtn").click();
         }
     });
+    $("#description").keypress(function (e) {
+        if (e.key == "Enter") {
+            e.preventDefault();
+            $("#addProjectBtn").click();
+        }
+    });
 
-
-
+    //adjust size of project description textarea according to content every time the page is loaded
+    $(".projectDescription").each(function () {
+        $(this).height(0);
+        $(this).height(this.scrollHeight);
+    });
+    //adjust size of project description textarea according to content every time text is changed
+    $(".projectDescription").on("input", function () {
+        $(this).height(0);
+        $(this).height(this.scrollHeight);
+    });
 
 </script>
 </body>

@@ -102,6 +102,31 @@ class AdminControllerTest {
     }
 
     @Test
+    void changeProjectDescription() throws Exception{
+        MockHttpSession session = new MockHttpSession();
+        projectRepository.save(new Project("text", "href", "description"));
+        Integer id = projectRepository.findByText("text").iterator().next().getId();
+        //not logged in
+        mvc.perform(post("/admin/changeProjectDescription")
+                .param("id", id.toString())
+                .param("description", "new description")
+                .session(session))
+                .andExpect(content().string("not logged in"));
+        //logged in
+        session.setAttribute("admin", true);
+        mvc.perform(post("/admin/changeProjectDescription")
+                .param("id", id.toString())
+                .param("description", "new description")
+                .session(session))
+                .andExpect(content().string("changed"));
+        Optional<Project> optionalProject = projectRepository.findById(id);
+        assertTrue(optionalProject.isPresent());
+        Project project = optionalProject.get();
+        assertEquals("new description", project.getDescription());
+        projectRepository.delete(project);
+    }
+
+    @Test
     @Transactional
     void addSocial() throws Exception {
         MockHttpSession session = new MockHttpSession();

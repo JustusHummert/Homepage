@@ -68,6 +68,20 @@ public class AdminController {
         return "deleted";
     }
 
+    //Change project description
+    @PostMapping("/changeProjectDescription")
+    public @ResponseBody String changeProjectDescription(@ModelAttribute("admin") boolean admin, Integer id, String description){
+        if(!admin)
+            return "not logged in";
+        Optional<Project> optionalProject = projectRepository.findById(id);
+        if(optionalProject.isEmpty())
+            return "no project";
+        Project project = optionalProject.get();
+        project.setDescription(description);
+        projectRepository.save(project);
+        return "changed";
+    }
+
     //Add a social
     @PostMapping("/addSocial")
     public @ResponseBody String addSocial(@ModelAttribute("admin") boolean admin, String text, String href,
