@@ -71,6 +71,7 @@
             <form>
                 <input type="text" id="text" aria-label="text" placeholder="Enter text"/>
                 <input type="text" id="href" aria-label="href" placeholder="Enter href"/>
+                <input type="text" id="description" aria-label="description" placeholder="Enter description"/>
                 <button type="button" id="addProjectBtn">add</button>
             </form>
         </p>
@@ -82,6 +83,9 @@
                     </td>
                     <td
                         th:text="${project.href}">
+                    </td>
+                    <td
+                        th:text="${project.description}">
                     </td>
                     <td>
                         <button type="button" class="btn delete-Project"
@@ -216,12 +220,14 @@
     $("#addProjectBtn").click(function () {
         let text = $("#text").val();
         let href = $("#href").val();
+        let description = $("#description").val();
         $.ajax({
             url: "/admin/addProject",
             method: "post",
             data: {
                 text: text,
-                href: href
+                href: href,
+                description: description
             },
             dataType: "text",
         })

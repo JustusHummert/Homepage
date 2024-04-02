@@ -35,7 +35,8 @@
                         <tbody>
                             <tr th:each="project: ${projects}">
                                 <td>
-                                    <a th:text="${project.text}" th:href="${project.href}"></a>
+                                    <h3><a th:text="${project.text}" th:href="${project.href}"></a></h3>
+                                    <p th:text="${project.description}"></p>
                                 </td>
                             </tr>
                         </tbody>

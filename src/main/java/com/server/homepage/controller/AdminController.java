@@ -52,10 +52,10 @@ public class AdminController {
 
     //Add a project
     @PostMapping("/addProject")
-    public @ResponseBody String addProject(@ModelAttribute("admin") boolean admin, String text, String href){
+    public @ResponseBody String addProject(@ModelAttribute("admin") boolean admin, String text, String href, String description){
         if(!admin)
             return "not logged in";
-        projectRepository.save(new Project(text, href));
+        projectRepository.save(new Project(text, href, description));
         return "added";
     }
 

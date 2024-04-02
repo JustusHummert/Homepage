@@ -17,12 +17,16 @@ public class Project {
     //The href of the project
     private String href;
 
+    //The description of the project
+    private String description;
+
     public Project() {
     }
 
-    public Project(String text, String href) {
+    public Project(String text, String href, String description) {
         this.text = text;
         this.href = href;
+        this.description = description;
     }
 
 
@@ -48,5 +52,13 @@ public class Project {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

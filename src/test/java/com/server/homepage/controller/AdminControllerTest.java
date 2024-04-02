@@ -86,7 +86,7 @@ class AdminControllerTest {
     @Test
     void deleteProject() throws Exception{
         MockHttpSession session = new MockHttpSession();
-        projectRepository.save(new Project("text", "href"));
+        projectRepository.save(new Project("text", "href", "description"));
         Integer id = projectRepository.findByText("text").iterator().next().getId();
         //not logged in
         mvc.perform(post("/admin/deleteProject")
