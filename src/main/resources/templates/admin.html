@@ -434,6 +434,12 @@
     $("#href").keypress(function (e) {
         if (e.key == "Enter") {
             e.preventDefault();
+            $("#description").focus();
+        }
+    });
+    $("#description").keypress(function (e) {
+        if (e.key == "Enter") {
+            e.preventDefault();
             $("#addProjectBtn").click();
         }
     });
@@ -461,12 +467,7 @@
             $("#addSocialBtn").click();
         }
     });
-    $("#description").keypress(function (e) {
-        if (e.key == "Enter") {
-            e.preventDefault();
-            $("#addProjectBtn").click();
-        }
-    });
+
 
     //adjust size of project description textarea according to content every time the page is loaded
     $(".projectDescription").each(function () {
