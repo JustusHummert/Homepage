@@ -52,10 +52,10 @@ public class AdminController {
 
     //Add a project
     @PostMapping("/addProject")
-    public @ResponseBody String addProject(@ModelAttribute("admin") boolean admin, String text, String href){
+    public @ResponseBody String addProject(@ModelAttribute("admin") boolean admin, String text, String href, String description){
         if(!admin)
             return "not logged in";
-        projectRepository.save(new Project(text, href));
+        projectRepository.save(new Project(text, href, description));
         return "added";
     }
 
@@ -66,6 +66,20 @@ public class AdminController {
             return "not logged in";
         projectRepository.deleteById(id);
         return "deleted";
+    }
+
+    //Change project description
+    @PostMapping("/changeProjectDescription")
+    public @ResponseBody String changeProjectDescription(@ModelAttribute("admin") boolean admin, Integer id, String description){
+        if(!admin)
+            return "not logged in";
+        Optional<Project> optionalProject = projectRepository.findById(id);
+        if(optionalProject.isEmpty())
+            return "no project";
+        Project project = optionalProject.get();
+        project.setDescription(description);
+        projectRepository.save(project);
+        return "changed";
     }
 
     //Add a social
@@ -145,6 +159,16 @@ public class AdminController {
         return "changed";
     }
 
-
+    //Change the projects description
+    @PostMapping("/changeProjectsDescription")
+    public @ResponseBody String changeProjectsDescription(@ModelAttribute("admin") boolean admin, String projectsDescription) {
+        if (!admin)
+            return "not logged in";
+        Optional<Title> optionalTitle = titleRepository.findById(0);
+        Title titleEntity = optionalTitle.orElseGet(Title::new);
+        titleEntity.setProjectsDescription(projectsDescription);
+        titleRepository.save(titleEntity);
+        return "changed";
+    }
 
 }

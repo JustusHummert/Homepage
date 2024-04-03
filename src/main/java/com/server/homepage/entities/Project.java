@@ -1,5 +1,6 @@
 package com.server.homepage.entities;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
@@ -17,12 +18,17 @@ public class Project {
     //The href of the project
     private String href;
 
+    //The description of the project
+    @Column(columnDefinition = "LONGTEXT")
+    private String description;
+
     public Project() {
     }
 
-    public Project(String text, String href) {
+    public Project(String text, String href, String description) {
         this.text = text;
         this.href = href;
+        this.description = description;
     }
 
 
@@ -48,5 +54,13 @@ public class Project {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

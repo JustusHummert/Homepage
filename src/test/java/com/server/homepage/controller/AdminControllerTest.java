@@ -86,7 +86,7 @@ class AdminControllerTest {
     @Test
     void deleteProject() throws Exception{
         MockHttpSession session = new MockHttpSession();
-        projectRepository.save(new Project("text", "href"));
+        projectRepository.save(new Project("text", "href", "description"));
         Integer id = projectRepository.findByText("text").iterator().next().getId();
         //not logged in
         mvc.perform(post("/admin/deleteProject")
@@ -99,6 +99,31 @@ class AdminControllerTest {
                 .param("id", id.toString())
                 .session(session))
                 .andExpect(content().string("deleted"));
+    }
+
+    @Test
+    void changeProjectDescription() throws Exception{
+        MockHttpSession session = new MockHttpSession();
+        projectRepository.save(new Project("text", "href", "description"));
+        Integer id = projectRepository.findByText("text").iterator().next().getId();
+        //not logged in
+        mvc.perform(post("/admin/changeProjectDescription")
+                .param("id", id.toString())
+                .param("description", "new description")
+                .session(session))
+                .andExpect(content().string("not logged in"));
+        //logged in
+        session.setAttribute("admin", true);
+        mvc.perform(post("/admin/changeProjectDescription")
+                .param("id", id.toString())
+                .param("description", "new description")
+                .session(session))
+                .andExpect(content().string("changed"));
+        Optional<Project> optionalProject = projectRepository.findById(id);
+        assertTrue(optionalProject.isPresent());
+        Project project = optionalProject.get();
+        assertEquals("new description", project.getDescription());
+        projectRepository.delete(project);
     }
 
     @Test
@@ -230,6 +255,29 @@ class AdminControllerTest {
         assertTrue(optionalNewTitle.isPresent());
         Title newTitle = optionalNewTitle.get();
         assertEquals("projectsTitle", newTitle.getProjectsTitle());
+        titleRepository.deleteAll();
+        oldTitle.ifPresent(title -> titleRepository.save(title));
+    }
+
+    @Test
+    void changeProjectsDescription() throws Exception {
+        Optional<Title> oldTitle = titleRepository.findById(0);
+        MockHttpSession session = new MockHttpSession();
+        //not logged in
+        mvc.perform(post("/admin/changeProjectsDescription")
+                        .param("projectsDescription", "projectsDescription")
+                        .session(session))
+                .andExpect(content().string("not logged in"));
+        //logged in
+        session.setAttribute("admin", true);
+        mvc.perform(post("/admin/changeProjectsDescription")
+                        .param("projectsDescription", "projectsDescription")
+                        .session(session))
+                .andExpect(content().string("changed"));
+        Optional<Title> optionalNewTitle = titleRepository.findById(0);
+        assertTrue(optionalNewTitle.isPresent());
+        Title newTitle = optionalNewTitle.get();
+        assertEquals("projectsDescription", newTitle.getProjectsDescription());
         titleRepository.deleteAll();
         oldTitle.ifPresent(title -> titleRepository.save(title));
     }

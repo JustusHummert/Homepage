@@ -1,5 +1,6 @@
 package com.server.homepage.entities;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 
@@ -15,12 +16,17 @@ public class Title {
     //The title of the projects
     private String projectsTitle;
 
+    //The description of the project
+    @Column(columnDefinition = "LONGTEXT")
+    private String projectsDescription;
+
     public Title() {
     }
 
-    public Title(String title, String projectsTitle) {
+    public Title(String title, String projectsTitle, String projectsDescription) {
         this.title = title;
         this.projectsTitle = projectsTitle;
+        this.projectsDescription = projectsDescription;
     }
 
     public Integer getId() {
@@ -45,5 +51,13 @@ public class Title {
 
     public void setProjectsTitle(String projectsTitle) {
         this.projectsTitle = projectsTitle;
+    }
+
+    public String getProjectsDescription() {
+        return projectsDescription;
+    }
+
+    public void setProjectsDescription(String projectsDescription) {
+        this.projectsDescription = projectsDescription;
     }
 }
