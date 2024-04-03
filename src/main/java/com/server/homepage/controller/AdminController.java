@@ -159,6 +159,16 @@ public class AdminController {
         return "changed";
     }
 
-
+    //Change the projects description
+    @PostMapping("/changeProjectsDescription")
+    public @ResponseBody String changeProjectsDescription(@ModelAttribute("admin") boolean admin, String projectsDescription) {
+        if (!admin)
+            return "not logged in";
+        Optional<Title> optionalTitle = titleRepository.findById(0);
+        Title titleEntity = optionalTitle.orElseGet(Title::new);
+        titleEntity.setProjectsDescription(projectsDescription);
+        titleRepository.save(titleEntity);
+        return "changed";
+    }
 
 }

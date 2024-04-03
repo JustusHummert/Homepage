@@ -258,4 +258,27 @@ class AdminControllerTest {
         titleRepository.deleteAll();
         oldTitle.ifPresent(title -> titleRepository.save(title));
     }
+
+    @Test
+    void changeProjectsDescription() throws Exception {
+        Optional<Title> oldTitle = titleRepository.findById(0);
+        MockHttpSession session = new MockHttpSession();
+        //not logged in
+        mvc.perform(post("/admin/changeProjectsDescription")
+                        .param("projectsDescription", "projectsDescription")
+                        .session(session))
+                .andExpect(content().string("not logged in"));
+        //logged in
+        session.setAttribute("admin", true);
+        mvc.perform(post("/admin/changeProjectsDescription")
+                        .param("projectsDescription", "projectsDescription")
+                        .session(session))
+                .andExpect(content().string("changed"));
+        Optional<Title> optionalNewTitle = titleRepository.findById(0);
+        assertTrue(optionalNewTitle.isPresent());
+        Title newTitle = optionalNewTitle.get();
+        assertEquals("projectsDescription", newTitle.getProjectsDescription());
+        titleRepository.deleteAll();
+        oldTitle.ifPresent(title -> titleRepository.save(title));
+    }
 }

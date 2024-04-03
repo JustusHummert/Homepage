@@ -3,7 +3,7 @@
     <head>
         <title th:text="${title.title}"></title>
         <style>
-            div{
+            .floatleft{
                 float: left;
             }
             .vspace{
@@ -21,10 +21,10 @@
     </head>
     <body>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-                <div>
+                <div class="floatleft">
                     <img src="/image"/>
                 </div>
-                <div id="socials">
+                <div id="socials" class="floatleft">
                     <table>
                         <tbody>
                             <tr th:each="social: ${socials}">
@@ -34,8 +34,9 @@
                         </tbody>
                     </table>                   
                 </div>
-                <div id="projects">
+                <div id="projects" class="floatleft">
                     <h2 th:text="${title.projectsTitle}"></h2>
+                    <div th:text="${title.projectsDescription}" class="divtext"></div>
                     <table>
                         <tbody>
                             <tr th:each="project: ${projects}">

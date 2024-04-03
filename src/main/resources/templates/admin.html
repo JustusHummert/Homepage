@@ -40,6 +40,13 @@
             </form>
         </p>
         <p th:text="${title.projectsTitle}"></p>
+        <p>
+            <form>
+                <textarea id="projectsDescription" aria-label="projectsDescription" placeholder="Enter projects description"
+                class="projectDescription" th:text="${title.projectsDescription}"></textarea>
+                <button type="button" id="changeProjectsDescriptionBtn">change</button>
+            </form>
+        </p>
         <h2>Socials</h2>
         <p>
             <form>
@@ -156,6 +163,29 @@
             method: "post",
             data: {
                 projectsTitle: projectsTitle
+            },
+            dataType: "text",
+        })
+            .done(function (data) {
+                console.info(data);
+                if(data=="changed")
+                    location.reload();
+                if(data=="not logged in")
+                    openModal();
+            })
+            .fail(function (jqXHR, textStatus, errorThrown) {
+                console.error(jqXHR, textStatus, errorThrown);
+            });
+    });
+
+    //changeProjectsDescription button functionality
+    $("#changeProjectsDescriptionBtn").click(function () {
+        let projectsDescription = $("#projectsDescription").val();
+        $.ajax({
+            url: "/admin/changeProjectsDescription",
+            method: "post",
+            data: {
+                projectsDescription: projectsDescription
             },
             dataType: "text",
         })
