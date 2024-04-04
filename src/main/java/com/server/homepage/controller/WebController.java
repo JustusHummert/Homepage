@@ -33,7 +33,7 @@ public class WebController {
     public String homepage(Model model){
         model.addAttribute("projects", projectRepository.findAll());
         model.addAttribute("socials", socialRepository.findAll());
-        model.addAttribute("title", titleRepository.findById(0).orElse(new Title("no title set", "no projects title set")));
+        model.addAttribute("title", titleRepository.findById(0).orElse(new Title("no title set", "no projects title set", "no projects description set")));
         return "homepage";
     }
 
@@ -41,7 +41,7 @@ public class WebController {
     public String admin(Model model){
         model.addAttribute("projects", projectRepository.findAll());
         model.addAttribute("socials", socialRepository.findAll());
-        model.addAttribute("title", titleRepository.findById(0).orElse(new Title("no title set", "no projects title set")));
+        model.addAttribute("title", titleRepository.findById(0).orElse(new Title("no title set", "no projects title set", "no projects description set")));
         return "admin";
     }
 
