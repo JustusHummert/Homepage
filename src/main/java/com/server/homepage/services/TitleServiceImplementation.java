@@ -5,9 +5,11 @@ import com.server.homepage.repositories.TitleRepository;
 import com.server.homepage.services.Exceptions.NotLoggedIn;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+@Service
 public class TitleServiceImplementation implements TitleService{
     @Autowired
     private TitleRepository titleRepository;

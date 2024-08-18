@@ -1,7 +1,5 @@
 package com.server.homepage.controller;
 
-import com.server.homepage.entities.*;
-import com.server.homepage.repositories.*;
 import com.server.homepage.services.*;
 import com.server.homepage.services.Exceptions.NotLoggedIn;
 import com.server.homepage.services.Exceptions.ProjectNotFound;
@@ -10,10 +8,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.Base64;
-import java.util.Optional;
+import java.io.IOException;
+
 
 @Controller
 @RequestMapping("/admin")
@@ -43,7 +42,7 @@ public class AdminController {
             request.getSession().setAttribute("admin", true);
             return "redirect:/admin";
         }
-        return "redirect:/admin?wrongPassword";
+        return "redirect:/admin?notLoggedIn&wrongPassword";
     }
 
     //Add a project
@@ -106,22 +105,28 @@ public class AdminController {
 
     //Change the image
     @PostMapping("/changeImage")
-    public String changeImage(String image, HttpServletRequest request){
+    public String changeImage(MultipartFile image, HttpServletRequest request){
         try {
             imageService.setImage(image, request);
         } catch (NotLoggedIn e) {
             return "redirect:/admin?notLoggedIn";
+        }
+        catch (IOException e){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Image could not be processed");
         }
         return "redirect:/admin";
     }
 
     //Change the favicon
     @PostMapping("/changeFavicon")
-    public String changeFavicon(String favicon, HttpServletRequest request){
+    public String changeFavicon(MultipartFile favicon, HttpServletRequest request){
         try {
             imageService.setFavicon(favicon, request);
         } catch (NotLoggedIn e) {
             return "redirect:/admin?notLoggedIn";
+        }
+        catch (IOException e){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Favicon could not be processed");
         }
         return "redirect:/admin";
     }

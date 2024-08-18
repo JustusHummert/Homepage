@@ -5,9 +5,11 @@ import com.server.homepage.repositories.AdminRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCrypt;
+import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+@Service
 public class UserServiceImplementation implements UserService{
     @Autowired
     private AdminRepository adminRepository;
