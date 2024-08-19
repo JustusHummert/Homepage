@@ -45,7 +45,7 @@
         <p>
             <form method="post" action="/admin/changeProjectsDescription" id="projectsDescriptionForm">
                 <textarea name="projectsDescription" placeholder="Enter projects description"
-                th:text="${title.projectsDescription}"></textarea>
+                th:text="${title.projectsDescription}" class="adjustableSize"></textarea>
                 <input type="submit" value="change">
             </form>
         </p>
@@ -129,6 +129,7 @@
             <img src="/image"/>
         </p>
     </div>
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script>
     //adjust size of project description textarea according to content every time the page is loaded
     $("textarea").each(function () {
