@@ -4,18 +4,7 @@
     td{
         border: 1px solid black;
     }
-    .modal{
-        display: none;
-        position: fixed;
-        z-index: 1;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        overflow: auto;
-        background-color: rgba(0,0,0,0.4);
-    }
-    .projectDescription{
+    textarea{
         width: 400px;
     }
 </style>
@@ -25,35 +14,48 @@
 </head>
 <body>
     <h1>Admin</h1>
+    <div th:if="${param.notLoggedIn}">
+        <form action="/admin/login" method="post">
+            <input type="password" name="password">
+            <input type="submit" value="login">
+        </form>
+    </div>
+    <div th:if="${param.noAdmin}">
+        <p>There is no Admin</p>
+    </div>
+    <div th:if="${param.wrongPassword}">
+        <p>Wrong password</p>
+    </div>
+    <div th:unless="${param.notLoggedIn}">
         <h2>Title</h2>
         <p>
-            <form>
-                <input type="text" id="title" aria-label="title" placeholder="Enter title"/>
-                <button type="button" id="changeTitleBtn">add</button>
+            <form method="post" action="/admin/changeTitle">
+                <input type="text" name="title" placeholder="Enter title">
+                <input type="submit" value="add">
             </form>
         </p>
         <p th:text="${title.title}"></p>
         <p>
-            <form>
-                <input type="text" id="projectsTitle" aria-label="projectsTitle" placeholder="Enter projects title"/>
-                <button type="button" id="changeProjectsTitleBtn">add</button>
+            <form method="post" action="/admin/changeProjectsTitle">
+                <input type="text" name="projectsTitle" placeholder="Enter projects title"/>
+                <input type="submit" value="add">
             </form>
         </p>
         <p th:text="${title.projectsTitle}"></p>
         <p>
-            <form>
-                <textarea id="projectsDescription" aria-label="projectsDescription" placeholder="Enter projects description"
-                class="projectDescription" th:text="${title.projectsDescription}"></textarea>
-                <button type="button" id="changeProjectsDescriptionBtn">change</button>
+            <form method="post" action="/admin/changeProjectsDescription" id="projectsDescriptionForm">
+                <textarea name="projectsDescription" placeholder="Enter projects description"
+                th:text="${title.projectsDescription}"></textarea>
+                <input type="submit" value="change">
             </form>
         </p>
         <h2>Socials</h2>
         <p>
-            <form>
-                <input type="text" id="socialText" aria-label="socialText" placeholder="Enter text"/>
-                <input type="text" id="socialHref" aria-label="socialHref" placeholder="Enter href"/>
-                <input type="text" id="socialIcon" aria-label="socialIcon" placeholder="Enter icon"/>
-                <button type="button" id="addSocialBtn">add</button>
+            <form method="post" action="/admin/addSocial">
+                <input type="text" name="text" placeholder="Enter text"/>
+                <input type="text" name="href" placeholder="Enter href"/>
+                <input type="text" name="icon" placeholder="Enter icon"/>
+                <input type="submit" value="add">
             </form>
         </p>
         <table>
@@ -69,21 +71,21 @@
                         th:text="${social.icon}">
                     </td>
                     <td>
-                        <button type="button" class="btn delete-Social"
-                                th:data-id="${social.id}">delete
-                        </button>
+                        <form method="post" action="/admin/deleteSocial">
+                            <input type="hidden" name="id" th:value="${social.id}">
+                            <input type="submit" value="delete">
+                        </form>
                     </td>
                 </tr>
             </tbody>
         </table>
         <h2>Projects</h2>
         <p>
-            <form>
-                <input type="text" id="text" aria-label="text" placeholder="Enter text"/>
-                <input type="text" id="href" aria-label="href" placeholder="Enter href"/>
-                <input type="text" id="description" aria-label="description" placeholder="Enter description"/>
-                <button type="button" id="addProjectBtn">add</button>
-            </form>
+            <form method="post" action="/admin/addProject">
+                <input type="text" name="text" placeholder="Enter text">
+                <input type="text" name="href" placeholder="Enter href">
+                <input type="text" name="description" placeholder="Enter description">
+                <input type="submit" value="add">
         </p>
         <table>
             <tbody>
@@ -95,387 +97,46 @@
                         th:text="${project.href}">
                     </td>
                     <td>
-                        <textarea class="projectDescription" th:text="${project.description}"></textarea>
-                        <button type="button" class="btn change-Project-Description"
-                                th:data-id="${project.id}">change
-                        </button>
+                        <form method="post" action="/admin/changeProjectDescription">
+                            <input type="hidden" name="id" th:value="${project.id}">
+                            <textarea name="description" th:text="${project.description}"></textarea>
+                            <input type="submit" value="change">
+                        </form>
                     </td>
                     <td>
-                        <button type="button" class="btn delete-Project"
-                                th:data-id="${project.id}">delete
-                        </button>
+                        <form method="post" action="/admin/deleteProject">
+                            <input type="hidden" name="id" th:value="${project.id}">
+                            <input type="submit" value="delete">
+                        </form>
                     </td>
                 </tr>
             </tbody>
         </table>
         <h2>Favicon</h2>
         <p>
-            <form>
-                <input type="file" id="favicon" aria-label="favicon"/>
-                <button type="button" id="changeFaviconBtn">upload</button>
+            <form method="post" action="/admin/changeFavicon" enctype="multipart/form-data">
+                <input type="file" name="favicon">
+                <input type="submit" value="upload">
             </form>
             <img src="/favicon.ico"/>
         </p>
         <h2>Image</h2>
         <p>
-            <form>
-                <input type="file" id="image" aria-label="image"/>
-                <button type="button" id="changeImageBtn">upload</button>
+            <form method="post" action="/admin/changeImage" enctype="multipart/form-data">
+                <input type="file" name="image">
+                <input type="submit" value="upload">
             </form>
             <img src="/image"/>
         </p>
-    <div id="modal" class="modal">
-        <div>
-            <input type="password" id="password" aria-label="password"/>
-            <button type="button" id="loginBtn">login</button>
-        </div>
     </div>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <script>
-    //changeTitle button functionality
-    $("#changeTitleBtn").click(function () {
-        let title = $("#title").val();
-        $.ajax({
-            url: "/admin/changeTitle",
-            method: "post",
-            data: {
-                title: title
-            },
-            dataType: "text",
-        })
-            .done(function (data) {
-                console.info(data);
-                if(data=="changed")
-                    location.reload();
-                if(data=="not logged in")
-                    openModal();
-            })
-            .fail(function (jqXHR, textStatus, errorThrown) {
-                console.error(jqXHR, textStatus, errorThrown);
-            });
-    });
-
-    //changeProjectsTitle button functionality
-    $("#changeProjectsTitleBtn").click(function () {
-        let projectsTitle = $("#projectsTitle").val();
-        $.ajax({
-            url: "/admin/changeProjectsTitle",
-            method: "post",
-            data: {
-                projectsTitle: projectsTitle
-            },
-            dataType: "text",
-        })
-            .done(function (data) {
-                console.info(data);
-                if(data=="changed")
-                    location.reload();
-                if(data=="not logged in")
-                    openModal();
-            })
-            .fail(function (jqXHR, textStatus, errorThrown) {
-                console.error(jqXHR, textStatus, errorThrown);
-            });
-    });
-
-    //changeProjectsDescription button functionality
-    $("#changeProjectsDescriptionBtn").click(function () {
-        let projectsDescription = $("#projectsDescription").val();
-        $.ajax({
-            url: "/admin/changeProjectsDescription",
-            method: "post",
-            data: {
-                projectsDescription: projectsDescription
-            },
-            dataType: "text",
-        })
-            .done(function (data) {
-                console.info(data);
-                if(data=="changed")
-                    location.reload();
-                if(data=="not logged in")
-                    openModal();
-            })
-            .fail(function (jqXHR, textStatus, errorThrown) {
-                console.error(jqXHR, textStatus, errorThrown);
-            });
-    });
-
-
-    //addSocial button functionality
-    $("#addSocialBtn").click(function () {
-        let text = $("#socialText").val();
-        let href = $("#socialHref").val();
-        let icon = $("#socialIcon").val();
-        $.ajax({
-            url: "/admin/addSocial",
-            method: "post",
-            data: {
-                text: text,
-                href: href,
-                icon: icon
-            },
-            dataType: "text",
-        })
-            .done(function (data) {
-                console.info(data);
-                if(data=="added")
-                    location.reload();
-                if(data=="not logged in")
-                    openModal();
-            })
-            .fail(function (jqXHR, textStatus, errorThrown) {
-                console.error(jqXHR, textStatus, errorThrown);
-            });
-    });
-
-    //deleteSocial button functionality
-    $(".delete-Social").click(function () {
-        let id = $(this).data("id");
-        $.ajax({
-            url: "/admin/deleteSocial",
-            method: "post",
-            data: {
-                id: id
-            },
-            dataType: "text",
-        })
-            .done(function (data) {
-                console.info(data);
-                if(data=="deleted")
-                    location.reload();
-                if(data=="not logged in")
-                    openModal();
-            })
-            .fail(function (jqXHR, textStatus, errorThrown) {
-                console.error(jqXHR, textStatus, errorThrown);
-            });
-    });
-
-    //addProject button functionality
-    $("#addProjectBtn").click(function () {
-        let text = $("#text").val();
-        let href = $("#href").val();
-        let description = $("#description").val();
-        $.ajax({
-            url: "/admin/addProject",
-            method: "post",
-            data: {
-                text: text,
-                href: href,
-                description: description
-            },
-            dataType: "text",
-        })
-            .done(function (data) {
-                console.info(data);
-                if(data=="added")
-                    location.reload();
-                if(data=="not logged in")
-                    openModal();
-            })
-            .fail(function (jqXHR, textStatus, errorThrown) {
-                console.error(jqXHR, textStatus, errorThrown);
-            });
-    });
-    //deleteProject button functionality
-    $(".delete-Project").click(function () {
-        let id = $(this).data("id");
-        $.ajax({
-            url: "/admin/deleteProject",
-            method: "post",
-            data: {
-                id: id
-            },
-            dataType: "text",
-        })
-            .done(function (data) {
-                console.info(data);
-                if(data=="deleted")
-                    location.reload();
-                if(data=="not logged in")
-                    openModal();
-            })
-            .fail(function (jqXHR, textStatus, errorThrown) {
-                console.error(jqXHR, textStatus, errorThrown);
-            });
-    });
-
-    //changeProjectDescription button functionality
-    $(".change-Project-Description").click(function () {
-        let id = $(this).data("id");
-        let description = $(this).parent().find(".projectDescription").val();
-        $.ajax({
-            url: "/admin/changeProjectDescription",
-            method: "post",
-            data: {
-                id: id,
-                description: description
-            },
-            dataType: "text",
-        })
-            .done(function (data) {
-                console.info(data);
-                if(data=="changed")
-                    location.reload();
-                if(data=="not logged in")
-                    openModal();
-            })
-            .fail(function (jqXHR, textStatus, errorThrown) {
-                console.error(jqXHR, textStatus, errorThrown);
-            });
-    });
-
-
-    //login button functionality
-    $("#loginBtn").click(function () {
-        let password = $("#password").val();
-        $.ajax({
-            url: "/admin/login",
-            method: "post",
-            data: {
-                password: password
-            },
-            dataType: "text",
-        })
-            .done(function (data) {
-                console.info(data);
-                alert(data);
-                if(data=="logged in")
-                    closeModal();
-            })
-            .fail(function (jqXHR, textStatus, errorThrown) {
-                console.error(jqXHR, textStatus, errorThrown);
-            });
-    });    
-
-    //changeFavicon button functionality
-    $("#changeFaviconBtn").click(function () {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-           let favicon = e.target.result;
-           $.ajax({
-            url: "/admin/changeFavicon",
-            method: "post",
-            data: {
-                favicon: favicon
-            },
-            dataType: "text",
-        })
-            .done(function (data) {
-                console.info(data);
-                if(data=="changed")
-                    location.reload();
-                if(data=="not logged in")
-                    openModal();
-            })
-            .fail(function (jqXHR, textStatus, errorThrown) {
-                console.error(jqXHR, textStatus, errorThrown);
-            });
-    }
-    reader.readAsDataURL($("#favicon")[0].files[0]);
-    });
-
-    //changeImage button functionality
-    $("#changeImageBtn").click(function () {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-           let image = e.target.result;
-           $.ajax({
-            url: "/admin/changeImage",
-            method: "post",
-            data: {
-                image: image
-            },
-            dataType: "text",
-        })
-            .done(function (data) {
-                console.info(data);
-                if(data=="changed")
-                    location.reload();
-                if(data=="not logged in")
-                    openModal();
-            })
-            .fail(function (jqXHR, textStatus, errorThrown) {
-                console.error(jqXHR, textStatus, errorThrown);
-            });
-    }
-    reader.readAsDataURL($("#image")[0].files[0]);
-    });
-        
-    function openModal(){
-        modal.style.display = "block";
-        $("#password").focus();
-    }
-
-    function closeModal(){
-        modal.style.display = "none";
-    }
-
-    //make buttons react to Enter
-    $("#title").keypress(function (e) {
-        if (e.key == "Enter") {
-            e.preventDefault();
-            $("#changeTitleBtn").click();
-        }
-    });
-    $("#projectsTitle").keypress(function (e) {
-        if (e.key == "Enter") {
-            e.preventDefault();
-            $("#changeProjectsTitleBtn").click();
-        }
-    });
-    $("#text").keypress(function (e) {
-        if (e.key == "Enter") {
-            e.preventDefault();
-            $("#href").focus();
-        }
-    });
-    $("#href").keypress(function (e) {
-        if (e.key == "Enter") {
-            e.preventDefault();
-            $("#description").focus();
-        }
-    });
-    $("#description").keypress(function (e) {
-        if (e.key == "Enter") {
-            e.preventDefault();
-            $("#addProjectBtn").click();
-        }
-    });
-    $("#password").keypress(function (e) {
-        if (e.key == "Enter") {
-            e.preventDefault();
-            $("#loginBtn").click();
-        }
-    });
-    $("#socialText").keypress(function (e) {
-        if (e.key == "Enter") {
-            e.preventDefault();
-            $("#socialHref").focus();
-        }
-    });
-    $("#socialHref").keypress(function (e) {
-        if (e.key == "Enter") {
-            e.preventDefault();
-            $("#socialIcon").focus();
-        }
-    });
-    $("#socialIcon").keypress(function (e) {
-        if (e.key == "Enter") {
-            e.preventDefault();
-            $("#addSocialBtn").click();
-        }
-    });
-
-
     //adjust size of project description textarea according to content every time the page is loaded
-    $(".projectDescription").each(function () {
+    $("textarea").each(function () {
         $(this).height(0);
         $(this).height(this.scrollHeight);
     });
     //adjust size of project description textarea according to content every time text is changed
-    $(".projectDescription").on("input", function () {
+    $("textarea").on("input", function () {
         $(this).height(0);
         $(this).height(this.scrollHeight);
     });
